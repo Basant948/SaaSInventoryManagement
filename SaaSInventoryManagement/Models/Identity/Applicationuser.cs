@@ -1,6 +1,10 @@
-﻿namespace SaaSInventoryManagement.Models.Identity
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace SaaSInventoryManagement.Models.Identity
 {
-    public class Applicationuser
+    public class Applicationuser : IdentityUser
     {
+        public int FirstName { get; set; }
+        public int LastName { get; set; }
     }
 }
