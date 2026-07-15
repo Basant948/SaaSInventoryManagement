@@ -1,6 +1,13 @@
-﻿namespace SaaSInventoryManagement.Data
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+
+namespace SaaSInventoryManagement.Data
 {
-    public class ApplicationDbContext
+    public class ApplicationDbContext : IdentityDbContext
     {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContext) :base(dbContext)
+        {
+            
+        }
     }
 }
