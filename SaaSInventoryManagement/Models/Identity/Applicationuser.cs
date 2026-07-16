@@ -4,7 +4,7 @@ namespace SaaSInventoryManagement.Models.Identity
 {
     public class Applicationuser : IdentityUser
     {
-        public int FirstName { get; set; }
-        public int LastName { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
     }
 }
