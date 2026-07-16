@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SaaSInventoryManagement.Data;
+using SaaSInventoryManagement.Middleware;
 using SaaSInventoryManagement.Models.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,15 +17,11 @@ builder.Services
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.AddMemoryCache();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+app.UseCorrelationId();
 
 app.UseHttpsRedirection();
 app.UseRouting();
