@@ -108,6 +108,22 @@ This project follows **Clean Architecture** with enterprise design patterns to e
 # Project Structure
 
 ```
+SaaSInventoryManagement
+│
+├── Controllers/
+├── Data/
+│   ├── Interfaces/
+│   └── Interceptors/
+│
+├── Entities/
+│   ├── Base/
+│   └── Identity/
+│
+├── Migrations/
+├── Services/
+├── Views/
+├── wwwroot/
+└── Program.cs
 
 ---
 
