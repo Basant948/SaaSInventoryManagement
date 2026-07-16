@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SaaSInventoryManagement.Data;
 using SaaSInventoryManagement.Middleware;
 using SaaSInventoryManagement.Models.Identity;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,10 +20,18 @@ builder.Services
 
 builder.Services.AddMemoryCache();
 
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
 var app = builder.Build();
 
 app.UseCorrelationId();
 app.UseExceptionHandling();
+
+app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
 
 app.UseHttpsRedirection();
 app.UseRouting();
