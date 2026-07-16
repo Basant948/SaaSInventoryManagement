@@ -22,6 +22,7 @@ builder.Services.AddMemoryCache();
 var app = builder.Build();
 
 app.UseCorrelationId();
+app.UseExceptionHandling();
 
 app.UseHttpsRedirection();
 app.UseRouting();
