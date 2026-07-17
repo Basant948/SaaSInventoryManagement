@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SaaSInventoryManagement.Data;
 using SaaSInventoryManagement.Models.Base;
 using SaaSInventoryManagement.Models.Identity;
-using SaaSInventoryManagement.Services.Interfaces_;
 using System.Reflection;
 
 namespace SaaSInventoryManagement.Extensions
@@ -13,7 +13,7 @@ namespace SaaSInventoryManagement.Extensions
                 nameof(SetTenantQueryFilter),
                 BindingFlags.NonPublic | BindingFlags.Static)!;
 
-        public static void ApplyTenantQueryFilters(this ModelBuilder builder, ITenantProvider tenantProvider)
+        public static void ApplyTenantQueryFilters(this ModelBuilder builder, ApplicationDbContext context)
         {
             foreach (var entityType in builder.Model.GetEntityTypes())
             {
@@ -22,15 +22,15 @@ namespace SaaSInventoryManagement.Extensions
 
                 SetTenantQueryFilterMethod
                     .MakeGenericMethod(entityType.ClrType)
-                    .Invoke(null, new object[] { builder, tenantProvider });
+                    .Invoke(null, new object[] { builder, context });
             }
         }
 
-        private static void SetTenantQueryFilter<TEntity>(ModelBuilder builder, ITenantProvider tenantProvider)
+        private static void SetTenantQueryFilter<TEntity>(ModelBuilder builder, ApplicationDbContext context)
             where TEntity : class, ITenantOwned
         {
             builder.Entity<TEntity>()
-                .HasQueryFilter(e => tenantProvider.IsSuperAdmin || e.TenantId == tenantProvider.TenantId);
+                .HasQueryFilter(e => context.TenantProvider.IsSuperAdmin || e.TenantId == context.TenantProvider.TenantId);
         }
 
         public static void EnsureNoUnprotectedTenantEntities(this ModelBuilder builder)
@@ -46,7 +46,6 @@ namespace SaaSInventoryManagement.Extensions
                     clrType.Namespace?.StartsWith("Microsoft.AspNetCore.Identity") == true)
                     continue;
 
-
                 var hasTenantIdProperty =
                     clrType.GetProperty("TenantId") != null ||
                     entityType.FindProperty("TenantId") != null;
@@ -55,9 +54,7 @@ namespace SaaSInventoryManagement.Extensions
                 {
                     throw new InvalidOperationException(
                         $"Entity '{clrType.Name}' has a TenantId property but does not implement " +
-                        $"ITenantOwned, so it will NOT be tenant-isolated - any signed-in user could " +
-                        $"read every tenant's rows for it. Fix: add 'ITenantOwned' to the class " +
-                        $"declaration for '{clrType.Name}'.");
+                        $"ITenantOwned, so it will NOT be tenant-isolated. Fix: add 'ITenantOwned' to '{clrType.Name}'.");
                 }
             }
         }
