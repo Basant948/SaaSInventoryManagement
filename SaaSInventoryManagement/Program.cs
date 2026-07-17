@@ -34,23 +34,25 @@ builder.Services.AddScoped<IUserClaimsPrincipalFactory<Applicationuser>, TenantC
 
 var app = builder.Build();
 
-app.UseCorrelationId();
 app.UseExceptionHandling();
 
-app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
-
 app.UseHttpsRedirection();
+app.UseCorrelationId();
+
+app.UseTenantMiddleware();
+
+app.MapStaticAssets();
+
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapStaticAssets();
+app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();
