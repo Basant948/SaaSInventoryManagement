@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SaaSInventoryManagement.Data.Extensions;
+using SaaSInventoryManagement.Extensions;
 using SaaSInventoryManagement.Models;
 using SaaSInventoryManagement.Models.Identity;
 using SaaSInventoryManagement.Services.Interfaces_;
