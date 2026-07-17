@@ -4,7 +4,7 @@ using SaaSInventoryManagement.Models.Identity;
 using SaaSInventoryManagement.Services.Interfaces_;
 using System.Reflection;
 
-namespace SaaSInventoryManagement.Data.Extensions
+namespace SaaSInventoryManagement.Extensions
 {
     public static class ModelBuilderTenantExtensions
     {
