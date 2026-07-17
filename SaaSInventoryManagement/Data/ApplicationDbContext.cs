@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using SaaSInventoryManagement.Models;
 using SaaSInventoryManagement.Models.Identity;
 
 namespace SaaSInventoryManagement.Data
@@ -10,5 +11,6 @@ namespace SaaSInventoryManagement.Data
         {
             
         }
+        public DbSet<Tenant> Tenants { get; set; }
     }
 }
