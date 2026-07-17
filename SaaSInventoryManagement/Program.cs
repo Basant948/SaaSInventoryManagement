@@ -39,14 +39,14 @@ app.UseExceptionHandling();
 app.UseHttpsRedirection();
 app.UseCorrelationId();
 
-app.UseTenantMiddleware();
+app.UseRouting();              
 
-app.MapStaticAssets();
+app.MapStaticAssets();          
 
-app.UseRouting();
+app.UseAuthentication();        
+app.UseAuthorization();         
 
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseTenantMiddleware();      
 
 app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
 
