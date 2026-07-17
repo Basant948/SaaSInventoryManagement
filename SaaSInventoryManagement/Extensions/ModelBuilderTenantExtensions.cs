@@ -29,11 +29,9 @@ namespace SaaSInventoryManagement.Data.Extensions
         private static void SetTenantQueryFilter<TEntity>(ModelBuilder builder, ITenantProvider tenantProvider)
             where TEntity : class, ITenantOwned
         {
-
             builder.Entity<TEntity>()
                 .HasQueryFilter(e => tenantProvider.IsSuperAdmin || e.TenantId == tenantProvider.TenantId);
         }
-
 
         public static void EnsureNoUnprotectedTenantEntities(this ModelBuilder builder)
         {
@@ -48,7 +46,12 @@ namespace SaaSInventoryManagement.Data.Extensions
                     clrType.Namespace?.StartsWith("Microsoft.AspNetCore.Identity") == true)
                     continue;
 
-                if (clrType.GetProperty("TenantId") != null)
+
+                var hasTenantIdProperty =
+                    clrType.GetProperty("TenantId") != null ||
+                    entityType.FindProperty("TenantId") != null;
+
+                if (hasTenantIdProperty)
                 {
                     throw new InvalidOperationException(
                         $"Entity '{clrType.Name}' has a TenantId property but does not implement " +
