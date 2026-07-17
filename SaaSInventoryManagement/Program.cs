@@ -3,12 +3,16 @@ using Microsoft.EntityFrameworkCore;
 using SaaSInventoryManagement.Data;
 using SaaSInventoryManagement.Middleware;
 using SaaSInventoryManagement.Models.Identity;
+using SaaSInventoryManagement.Services;
+using SaaSInventoryManagement.Services.Interfaces_;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
