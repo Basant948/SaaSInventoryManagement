@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SaaSInventoryManagement.Models.Base;
 using SaaSInventoryManagement.Services.Interfaces_;
 
-namespace SaaSInventoryManagement.Extensions
+namespace SaaSInventoryManagement.Data.Extensions
 {
     public static class ChangeTrackerTenantExtensions
     {
