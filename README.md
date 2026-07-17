@@ -12,17 +12,17 @@ This project is designed using **enterprise-level architecture and best practice
 
 ## Enterprise Features ⭐
 
-* Multi-Tenant SaaS Architecture
-* Tenant Isolation
-* Tenant Registration
-* Tenant-Based Data Filtering
-* ASP.NET Core Identity
-* Cookie Authentication
-* Role-Based Authorization
-* Database-Driven Permission-Based Authorization
-* Audit Logging
-* User Activity Tracking
-* Background Jobs (Hangfire)
+* Multi-Tenant SaaS Architecture ✅ (core isolation layer implemented)
+* Tenant Isolation — read-side (EF Core global query filters) ✅
+* Tenant Isolation — write-side (INSERT/UPDATE guards) ✅
+* Tenant Registration ⏳
+* Tenant-Based Data Filtering ✅
+* ASP.NET Core Identity ✅
+* Cookie Authentication ✅
+* Role-Based Authorization ⏳
+* Database-Driven Permission-Based Authorization ⏳
+* Audit Logging ⏳
+* Background Jobs (Hangfire) ⏳
 
 ## Inventory Management
 
@@ -53,6 +53,24 @@ This project is designed using **enterprise-level architecture and best practice
 * Dashboard
 * Business Reports
 * Notifications
+
+---
+
+# Multi-Tenant Architecture
+
+This application uses a **Shared Database, Shared Schema** multi-tenancy model — all tenants share one database, isolated via tenant-scoped EF Core global query filters, write guards, and claims-based tenant resolution.
+
+Implemented so far:
+
+* `Tenant` model and `ITenantOwned` interface for marking tenant-scoped entities
+* `TenantProvider` — resolves and caches the current request's `TenantId` / SuperAdmin status from claims
+* `TenantClaimsPrincipalFactory` — stamps a `tenant_id` claim onto the auth cookie at login
+* `TenantMiddleware` — rejects authenticated requests with no resolvable tenant (403)
+* Reflection-based automatic global query filters on every `ITenantOwned` entity
+* `ChangeTracker` write guards — enforce `TenantId` on insert, block cross-tenant `TenantId` changes on update
+* Startup-time validation (`EnsureNoUnprotectedTenantEntities`) that fails fast if an entity has a `TenantId` property but doesn't implement `ITenantOwned`
+
+📄 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the full design — request pipeline diagram, `ITenantOwned` pattern, and tenant write-guard rules.
 
 ---
 
@@ -100,29 +118,43 @@ This project follows **Clean Architecture** with enterprise design patterns to e
 
 ## Logging
 
-* ASP.NET Core Logging
+* ASP.NET Core Logging (Serilog)
 * Audit Logging
 
 ---
 
 # Project Structure
-
-```
 SaaSInventoryManagement
 │
 ├── Controllers/
-├── Data/
-│   ├── Interfaces/
-│   └── Interceptors/
 │
-├── Entities/
+├── Data/
+│   └── ApplicationDbContext.cs
+│
+├── Extensions/                                    # Moved to root level
+│   ├── ModelBuilderTenantExtensions.cs            # applies global tenant query filters,
+│   │                                            # validates no unprotected TenantId entities
+│   └── ChangeTrackerTenantExtensions.cs          # enforces tenant write guards on insert/update
+│
+├── Middleware/
+│   └── TenantMiddleware.cs                       # blocks requests with no resolvable tenant
+│
+├── Models/
 │   ├── Base/
-│   └── Identity/
+│   │   └── ITenantOwned.cs                       # marker interface for tenant-scoped entities
+│   ├── Identity/
+│   │   └── ApplicationUser.cs                    # extends IdentityUser with FirstName/LastName/TenantId
+│   └── Tenant.cs                                 # tenant (company) entity
+│
+├── Services/
+│   ├── Interfaces_/
+│   │   └── ITenantProvider.cs                    # contract for resolving current TenantId / SuperAdmin
+│   ├── TenantProvider.cs                         # reads & caches tenant_id claim per request
+│   └── TenantClaimsPrincipalFactory.cs           # stamps tenant_id claim onto auth cookie at login
 │
 ├── Migrations/
-├── Services/
 ├── Views/
-├── wwwroot/
+├── wwwroot/                           # full multi-tenancy design doc
 └── Program.cs
 
 ---
@@ -183,21 +215,21 @@ dotnet run
 
 # Roadmap
 
-* ⏳ Multi-Tenant SaaS Architecture
-* ⏳ Authentication & Authorization
+* ✅ Multi-Tenant SaaS Architecture (core isolation layer)
+* ✅ Authentication (ASP.NET Core Identity + cookie auth)
+* ⏳ Role-Based & Permission-Based Authorization
 * ⏳ Inventory Management
 * ⏳ Sales & Purchasing
 * ⏳ Stock Operations
 * ⏳ Dashboard & Reports
 * ⏳ Background Jobs
-* ⏳ Database-Driven Permission Management
 * ⏳ SignalR Real-Time Notifications
 * ⏳ QR Code Payment Integration
 * ⏳ Online Payment Integration
 * ⏳ REST API
 * ⏳ JWT Authentication
 * ⏳ Export to Excel & PDF
-* ⏳ Business Dashboard Analytics 
+* ⏳ Business Dashboard Analytics
 
 ---
 
