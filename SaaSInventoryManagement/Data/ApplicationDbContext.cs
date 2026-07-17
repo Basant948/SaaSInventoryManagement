@@ -1,41 +1,46 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SaaSInventoryManagement.Extensions;
 using SaaSInventoryManagement.Models;
 using SaaSInventoryManagement.Models.Identity;
 using SaaSInventoryManagement.Services.Interfaces_;
 
-namespace SaaSInventoryManagement.Data
+public class ApplicationDbContext : IdentityDbContext<Applicationuser>
 {
-    public class ApplicationDbContext : IdentityDbContext<Applicationuser>
+    private readonly ITenantProvider _tenantProvider;
+
+    //internal ITenantProvider TenantProvider => _tenantProvider;
+    // this above OR this downn works same.needed for the extension methods to access the tenant provider from the context.
+    internal ITenantProvider TenantProvider
     {
-        private readonly ITenantProvider _tenantProvider;
+        get { return _tenantProvider; }
+    }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContext, ITenantProvider tenantProvider) : base(dbContext)
-        {
-            _tenantProvider = tenantProvider;
-        }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContext, ITenantProvider tenantProvider) : base(dbContext)
+    {
+        _tenantProvider = tenantProvider;
+    }
 
-        public DbSet<Tenant> Tenants { get; set; }
+    public DbSet<Tenant> Tenants { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
 
-            builder.ApplyTenantQueryFilters(_tenantProvider);
-            builder.EnsureNoUnprotectedTenantEntities();
-        }
+        builder.ApplyTenantQueryFilters(this);   
+        builder.EnsureNoUnprotectedTenantEntities();
+    }
 
-        public override int SaveChanges(bool acceptAllChangesOnSuccess)
-        {
-            ChangeTracker.ApplyTenantWriteGuards(_tenantProvider);
-            return base.SaveChanges(acceptAllChangesOnSuccess);
-        }
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        ChangeTracker.ApplyTenantWriteGuards(_tenantProvider);
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
 
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
-        {
-            ChangeTracker.ApplyTenantWriteGuards(_tenantProvider);
-            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        }
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    {
+        ChangeTracker.ApplyTenantWriteGuards(_tenantProvider);
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 }
