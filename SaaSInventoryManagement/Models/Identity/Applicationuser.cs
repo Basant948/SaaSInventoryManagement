@@ -6,5 +6,8 @@ namespace SaaSInventoryManagement.Models.Identity
     {
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
+
+        public int? TenantId { get; set; }
+        public Tenant Tenant { get; set; }
     }
 }
