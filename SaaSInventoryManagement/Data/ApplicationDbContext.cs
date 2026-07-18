@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using SaaSInventoryManagement.Configurations;
 using SaaSInventoryManagement.Extensions;
 using SaaSInventoryManagement.Models;
 using SaaSInventoryManagement.Models.Identity;
@@ -23,10 +24,13 @@ public class ApplicationDbContext : IdentityDbContext<Applicationuser>
     }
 
     public DbSet<Tenant> Tenants { get; set; }
+    public DbSet<AuditLog> AuditLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.ApplyConfiguration(new AuditLogConfiguration());
 
         builder.ApplyTenantQueryFilters(this);   
         builder.EnsureNoUnprotectedTenantEntities();

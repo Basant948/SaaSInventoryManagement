@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using SaaSInventoryManagement.Models;
 using SaaSInventoryManagement.Models.Base;
 using SaaSInventoryManagement.Services.Interfaces_;
 
@@ -13,11 +14,21 @@ namespace SaaSInventoryManagement.Extensions
             {
                 if (entry.Entity is not ITenantOwned tenantOwned)
                     continue;
+                if (entry.Entity is AuditLog && entry.State != EntityState.Added)
+                {
+                    throw new InvalidOperationException(
+                        "AuditLog rows are append-only and cannot be modified or deleted.");
+                }
 
                 if (entry.State == EntityState.Added)
                 {
                     if (tenantProvider.IsSuperAdmin)
+                    {
+                        if (tenantOwned.TenantId == 0)
+                            throw new InvalidOperationException(
+                                $"SuperAdmin must explicitly set TenantId when creating '{entry.Entity.GetType().Name}'.");
                         continue;
+                    }
 
                     if (tenantProvider.TenantId is null)
                     {
