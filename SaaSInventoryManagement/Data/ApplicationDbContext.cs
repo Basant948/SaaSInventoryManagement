@@ -34,6 +34,8 @@ public class ApplicationDbContext : IdentityDbContext<Applicationuser>
         base.OnModelCreating(builder);
 
         builder.ApplyConfiguration(new AuditLogConfiguration());
+        builder.ApplyConfiguration(new PermissionConfiguration());
+        builder.ApplyConfiguration(new UserPermissionConfiguration());
 
         builder.ApplyTenantQueryFilters(this);   
         builder.EnsureNoUnprotectedTenantEntities();
