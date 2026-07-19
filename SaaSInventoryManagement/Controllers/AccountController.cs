@@ -52,5 +52,15 @@ namespace SaaSInventoryManagement.Controllers
             ModelState.AddModelError(string.Empty, "Invalid email or password.");
             return View(model);
         }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Login", "Account");
+        }
+
+        [HttpGet]
+        public IActionResult AccessDenied() => View();
     }
 }
