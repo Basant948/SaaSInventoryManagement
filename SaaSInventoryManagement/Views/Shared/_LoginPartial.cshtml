@@ -1,0 +1,18 @@
+﻿@if (User.Identity?.IsAuthenticated == true)
+{
+    <div class="d-flex align-items-center justify-content-between">
+        <div class="text-truncate">
+            <div class="text-white small fw-semibold text-truncate">@User.Identity.Name</div>
+            <div class="text-secondary" style="font-size:0.72rem;">@(User.IsInRole("SuperAdmin") ? "Super Admin" : User.IsInRole("TenantAdmin") ? "Tenant Admin" : "Staff")</div>
+        </div>
+        <form asp-controller="Account" asp-action="Logout" method="post" class="ms-2">
+            <button type="submit" class="btn btn-sm btn-outline-light" title="Logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+        </form>
+    </div>
+}
+else
+{
+    <a class="btn btn-sm btn-outline-light w-100" asp-controller="Account" asp-action="Login">Login</a>
+}
