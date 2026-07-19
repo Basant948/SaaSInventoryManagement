@@ -25,8 +25,16 @@ builder.Services.AddDbContext<ApplicationDbContext>((sp, options) =>
     options.AddInterceptors(sp.GetRequiredService<AuditSaveChangesInterceptor>());
 });
 
+// Identity
 builder.Services
-    .AddIdentity<Applicationuser, IdentityRole>()
+    .AddIdentity<Applicationuser, IdentityRole>(options =>
+    {
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.Lockout.AllowedForNewUsers = true;
+        options.SignIn.RequireConfirmedAccount = false;
+        options.SignIn.RequireConfirmedEmail = false;
+    })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
