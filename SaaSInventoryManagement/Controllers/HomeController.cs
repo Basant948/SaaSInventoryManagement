@@ -1,19 +1,24 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using SaaSInventoryManagement.Exceptions;
 using SaaSInventoryManagement.Models;
+using SaaSInventoryManagement.Services;
 using SaaSInventoryManagement.ViewModels;
 using System.Diagnostics;
 
 namespace SaaSInventoryManagement.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly IMemoryCache _cache;
+        private readonly NavigationService _navigation;
 
-        public HomeController(IMemoryCache cache)
+        public HomeController(IMemoryCache cache, NavigationService navigation)
         {
             _cache = cache;
+            _navigation = navigation;
         }
         public IActionResult Index()
         {
