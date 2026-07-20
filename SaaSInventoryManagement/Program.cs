@@ -1,7 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using SaaSInventoryManagement.Data;
 using SaaSInventoryManagement.Data.Interceptors;
+using SaaSInventoryManagement.Infrastructure.Authorization;
 using SaaSInventoryManagement.Middleware;
 using SaaSInventoryManagement.Models.Identity;
 using SaaSInventoryManagement.Services;
@@ -56,6 +59,27 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Account/AccessDenied";
     options.ExpireTimeSpan = TimeSpan.FromHours(8);
     options.SlidingExpiration = true;
+});
+
+builder.Services.Configure<SecurityStampValidatorOptions>(options =>
+    options.ValidationInterval = TimeSpan.FromMinutes(1));
+
+
+builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+//  Dynamically creates a policy for any [Authorize(Policy = "perm:key")] attribute
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+
+// every action requires an authenticated user unless [AllowAnonymous] ──
+builder.Services.AddControllersWithViews(options =>
+{
+    var requireAuthPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+    options.Filters.Add(new AuthorizeFilter(requireAuthPolicy));
+});
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "RequestVerificationToken";
 });
 
 var app = builder.Build();

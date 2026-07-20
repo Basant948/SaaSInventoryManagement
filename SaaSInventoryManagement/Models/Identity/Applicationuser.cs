@@ -9,5 +9,7 @@ namespace SaaSInventoryManagement.Models.Identity
 
         public int? TenantId { get; set; }
         public Tenant Tenant { get; set; }
+
+        public bool IsPermissionManaged { get; set; } = false;
     }
 }
