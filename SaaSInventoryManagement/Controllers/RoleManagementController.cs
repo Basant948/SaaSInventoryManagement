@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SaaSInventoryManagement.Models;
 using SaaSInventoryManagement.Models.Identity;
 using SaaSInventoryManagement.Services.Interfaces_;
 using SaaSInventoryManagement.ViewModels.RoleManagement;
-using Microsoft.EntityFrameworkCore;
 
 namespace SaaSInventoryManagement.Controllers
 {
@@ -79,6 +80,46 @@ namespace SaaSInventoryManagement.Controllers
 
             targetUser.IsPermissionManaged = request.Selected;
             await _db.SaveChangesAsync();
+
+            return Json(new { success = true });
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> SavePermissions([FromBody] SavePermissionsRequestVm request)
+        {
+            if (request is null || string.IsNullOrEmpty(request.UserId))
+                return BadRequest(new { message = "A user must be selected." });
+
+            var targetUser = await GetTenantUserAsync(request.UserId);
+            if (targetUser is null)
+                return NotFound();
+
+            var roles = await _userManager.GetRolesAsync(targetUser);
+            if (roles.Contains("TenantAdmin") || roles.Contains("SuperAdmin"))
+                return BadRequest(new { message = "This user already has full access and can't have individual permissions edited." });
+
+            var existing = _db.UserPermissions.Where(up => up.UserId == request.UserId);
+            _db.UserPermissions.RemoveRange(existing);
+
+            var permissionIds = await _db.Permissions
+                .Where(p => request.PermissionKeys.Contains(p.Key))
+                .Select(p => p.Id)
+                .ToListAsync();
+
+            foreach (var permissionId in permissionIds)
+            {
+                _db.UserPermissions.Add(new UserPermission
+                {
+                    UserId = request.UserId,
+                    PermissionId = permissionId,
+                    GrantedAt = DateTime.UtcNow
+                });
+            }
+
+            await _db.SaveChangesAsync();
+
+            // Forces a fresh cookie with up-to-date "perm" claims within
+            await _userManager.UpdateSecurityStampAsync(targetUser);
 
             return Json(new { success = true });
         }
