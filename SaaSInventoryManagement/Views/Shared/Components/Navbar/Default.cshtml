@@ -1,0 +1,98 @@
+﻿@using SaaSInventoryManagement.ViewModels.Navigation
+@model List<NavGroupDto>
+
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    var currentKey = ViewContext.RouteData.Values["key"]?.ToString();
+
+    var dashboardGroup = Model.FirstOrDefault(g => g.GroupName == "General");
+    var adminGroup = Model.FirstOrDefault(g => g.GroupName == "Administration");
+    var featureGroups = Model.Where(g => g.GroupName != "General" && g.GroupName != "Administration").ToList();
+
+    bool IsFeatureActive(string key) =>
+        currentController.Equals("Home", StringComparison.OrdinalIgnoreCase) &&
+        currentAction.Equals("Feature", StringComparison.OrdinalIgnoreCase) &&
+        currentKey == key;
+
+    bool IsDashboardActive() =>
+        currentController.Equals("Home", StringComparison.OrdinalIgnoreCase) &&
+        currentAction.Equals("Index", StringComparison.OrdinalIgnoreCase);
+
+    bool IsRoleManagementActive() =>
+        currentController.Equals("RoleManagement", StringComparison.OrdinalIgnoreCase);
+
+    string GroupIcon(string groupName) => groupName switch
+    {
+        "Catalog" => "fa-solid fa-box",
+        "Inventory" => "fa-solid fa-warehouse",
+        "Procurement" => "fa-solid fa-truck",
+        "Sales" => "fa-solid fa-cart-shopping",
+        "Reports" => "fa-solid fa-chart-simple",
+        _ => "fa-solid fa-layer-group"
+    };
+}
+
+<ul class="sidebar-menu">
+    @if (dashboardGroup != null)
+    {
+        foreach (var item in dashboardGroup.Items)
+        {
+            <li class="sidebar-item">
+                <a class="sidebar-link @(IsDashboardActive() ? "active" : "")" asp-controller="Home" asp-action="Index">
+                    <i class="@item.IconClass"></i> <span>@item.DisplayName</span>
+                </a>
+            </li>
+        }
+    }
+
+    @foreach (var group in featureGroups)
+    {
+        var collapseId = "grp-" + group.GroupName.Replace(" ", "");
+        var groupIsActive = group.Items.Any(i => IsFeatureActive(i.Key));
+
+        <li class="sidebar-item">
+            <a class="sidebar-link" href="#" data-bs-toggle="collapse" data-bs-target="#@collapseId"
+               aria-expanded="@(groupIsActive ? "true" : "false")">
+                <i class="@GroupIcon(group.GroupName)"></i> <span>@group.GroupName</span>
+                <i class="fa-solid fa-chevron-down chevron"></i>
+            </a>
+            <ul class="collapse sidebar-submenu @(groupIsActive ? "show" : "")" id="@collapseId">
+                @foreach (var item in group.Items)
+                {
+                    <li>
+                        <a class="@(IsFeatureActive(item.Key) ? "active" : "")"
+                           asp-controller="Home" asp-action="Feature" asp-route-key="@item.Key">
+                            @item.DisplayName
+                        </a>
+                    </li>
+                }
+            </ul>
+        </li>
+    }
+
+    @if (adminGroup != null)
+    {
+        <li class="sidebar-section-label">Admin</li>
+        foreach (var item in adminGroup.Items)
+        {
+            var isUserManage = item.Key == "inv.users.manage";
+            var active = isUserManage ? IsRoleManagementActive() : IsFeatureActive(item.Key);
+
+            <li class="sidebar-item">
+                @if (isUserManage)
+                {
+                    <a class="sidebar-link @(active ? "active" : "")" asp-controller="RoleManagement" asp-action="Index">
+                        <i class="@item.IconClass"></i> <span>@item.DisplayName</span>
+                    </a>
+                }
+                else
+                {
+                    <a class="sidebar-link @(active ? "active" : "")" asp-controller="Home" asp-action="Feature" asp-route-key="@item.Key">
+                        <i class="@item.IconClass"></i> <span>@item.DisplayName</span>
+                    </a>
+                }
+            </li>
+        }
+    }
+</ul>
