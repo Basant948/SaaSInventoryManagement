@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SaaSInventoryManagement.Models.Identity;
 using SaaSInventoryManagement.ViewModels.Account;
@@ -14,6 +15,7 @@ namespace SaaSInventoryManagement.Controllers
             _signInManager = signInManager;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
         {
@@ -24,6 +26,7 @@ namespace SaaSInventoryManagement.Controllers
             return View(new LoginViewModel());
         }
 
+        [AllowAnonymous]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
         {
