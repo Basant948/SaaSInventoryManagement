@@ -63,6 +63,7 @@ namespace SaaSInventoryManagement.Controllers
             return RedirectToAction("Login", "Account");
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult AccessDenied() => View();
     }
