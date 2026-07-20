@@ -67,6 +67,22 @@ namespace SaaSInventoryManagement.Controllers
             return Json(response);
         }
 
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleSelection([FromBody] ToggleSelectionRequestVm request)
+        {
+            if (request is null || string.IsNullOrEmpty(request.UserId))
+                return BadRequest(new { message = "A user must be specified." });
+
+            var targetUser = await GetTenantUserAsync(request.UserId);
+            if (targetUser is null)
+                return NotFound();
+
+            targetUser.IsPermissionManaged = request.Selected;
+            await _db.SaveChangesAsync();
+
+            return Json(new { success = true });
+        }
+
         private async Task<List<RoleManagementUserVm>> GetTenantUsersAsync()
         {
             IQueryable<Applicationuser> query = _db.Users.Where(u => u.TenantId != null);
