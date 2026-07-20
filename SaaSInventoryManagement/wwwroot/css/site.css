@@ -234,3 +234,66 @@ body {
     color: #6c757d;
     margin-bottom: 1.5rem;
 }
+
+* ── Role Management three-pane picker ───────────────────────────────── */
+
+.rm-pane {
+    background: #fff;
+    border: 1px solid #e5e9f0;
+    border-radius: 0.4rem;
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.rm-pane-header {
+    padding: 0.85rem 1rem;
+    font-weight: 600;
+    border-bottom: 1px solid #e5e9f0;
+    background: #f8f9fb;
+}
+
+.rm-pane-search {
+    padding: 0.75rem;
+    border-bottom: 1px solid #f0f1f4;
+}
+
+.rm-pane-body {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.rm-user-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f5f6f8;
+}
+
+    .rm-user-row:hover {
+        background: #f8f9fb;
+    }
+
+    .rm-user-row.active {
+        background: #eef2ff;
+        font-weight: 600;
+    }
+
+.rm-perm-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 1rem;
+    border-bottom: 1px solid #f5f6f8;
+}
+
+.rm-perm-group-label {
+    padding: 0.5rem 1rem 0.2rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #8a93a6;
+    background: #fafbfc;
+}
