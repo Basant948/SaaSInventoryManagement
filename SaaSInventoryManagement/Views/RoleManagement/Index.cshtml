@@ -1,0 +1,245 @@
+﻿@using SaaSInventoryManagement.ViewModels.RoleManagement
+@model List<RoleManagementUserVm>
+@{
+    ViewData["Title"] = "Role Management";
+}
+
+<h1 class="h3 mb-4">Role Management</h1>
+
+<form id="rm-antiforgery">@Html.AntiForgeryToken()</form>
+
+<div class="row g-3">
+    <!-- ── All Users >
+    <div class="col-lg-4">
+        <div class="rm-pane">
+            <div class="rm-pane-header">All Users</div>
+            <div class="rm-pane-search">
+                <input type="text" id="rm-all-search" class="form-control form-control-sm" placeholder="Search" />
+            </div>
+            <div class="rm-pane-body" id="rm-all-users"></div>
+        </div>
+    </div>
+
+    <!-- Selected Users -->
+    <div class="col-lg-4">
+        <div class="rm-pane">
+            <div class="rm-pane-header">Selected Users</div>
+            <div class="rm-pane-search">
+                <input type="text" id="rm-selected-search" class="form-control form-control-sm" placeholder="Search" />
+            </div>
+            <div class="rm-pane-body" id="rm-selected-users"></div>
+        </div>
+    </div>
+
+    <!-- Permissions -->
+    <div class="col-lg-4">
+        <div class="rm-pane">
+            <div class="rm-pane-header d-flex align-items-center justify-content-between">
+                <span>Permissions <span class="text-muted fw-normal">(Selected user)</span></span>
+            </div>
+            <div class="rm-pane-search">
+                <input type="text" id="rm-perm-search" class="form-control form-control-sm" placeholder="Search" disabled />
+            </div>
+            <div class="px-2 pt-2" id="rm-save-wrap" style="display:none;">
+                <button type="button" id="rm-save-btn" class="btn btn-primary btn-sm w-100 mb-2">Save Permissions</button>
+            </div>
+            <div class="rm-pane-body" id="rm-permissions">
+                <div class="text-muted small p-3">Select a user to view and edit their permissions.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const allUsers = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }));
+            const selectedIds = new Set(allUsers.filter(u => u.isSelected).map(u => u.id)); // seeded from DB — persists across reloads
+            let activeUserId = null;
+            let currentPermissions = []; // last loaded permission list for active user
+            let isWildcardUser = false;
+
+            const antiforgeryToken = () => document.querySelector('#rm-antiforgery input[name="__RequestVerificationToken"]').value;
+
+            function renderAllUsers(filter) {
+                const term = (filter || '').toLowerCase();
+                const container = document.getElementById('rm-all-users');
+                container.innerHTML = '';
+                allUsers
+                    .filter(u => u.fullName.toLowerCase().includes(term) || u.email.toLowerCase().includes(term))
+                    .forEach(u => {
+                        const row = document.createElement('div');
+                        row.className = 'rm-user-row';
+                        row.innerHTML = `
+                            <input type="checkbox" class="form-check-input" ${selectedIds.has(u.id) ? 'checked' : ''} />
+                            <span>${u.fullName}</span>
+                            <span class="badge bg-light text-secondary ms-auto">${u.role}</span>
+                        `;
+                        row.querySelector('input').addEventListener('change', e => toggleSelected(u.id, e.target.checked));
+                        container.appendChild(row);
+                    });
+            }
+
+            async function toggleSelected(userId, isChecked) {
+                // Optimistic UI update
+                if (isChecked) {
+                    selectedIds.add(userId);
+                } else {
+                    selectedIds.delete(userId);
+                    if (activeUserId === userId) {
+                        activeUserId = null;
+                        showEmptyPermissionsState();
+                    }
+                }
+                renderSelectedUsers(document.getElementById('rm-selected-search').value);
+
+                // Persist so this stays selected on next reload/session
+                try {
+                    const res = await fetch('/RoleManagement/ToggleSelection', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': antiforgeryToken()
+                        },
+                        body: JSON.stringify({ userId, selected: isChecked })
+                    });
+                    if (!res.ok) throw new Error('toggle failed');
+                } catch {
+                    // Roll back on failure
+                    if (isChecked) selectedIds.delete(userId); else selectedIds.add(userId);
+                    renderAllUsers(document.getElementById('rm-all-search').value);
+                    renderSelectedUsers(document.getElementById('rm-selected-search').value);
+                    alert('Could not save that selection. Please try again.');
+                }
+            }
+
+            function showEmptyPermissionsState() {
+                document.getElementById('rm-permissions').innerHTML =
+                    '<div class="text-muted small p-3">Select a user to view and edit their permissions.</div>';
+                document.getElementById('rm-save-wrap').style.display = 'none';
+                document.getElementById('rm-perm-search').disabled = true;
+            }
+
+            function renderSelectedUsers(filter) {
+                const term = (filter || '').toLowerCase();
+                const container = document.getElementById('rm-selected-users');
+                container.innerHTML = '';
+
+                const selected = allUsers.filter(u => selectedIds.has(u.id));
+
+                if (selected.length === 0) {
+                    container.innerHTML = '<div class="text-muted small p-3">Check a user in "All Users" to manage their permissions here.</div>';
+                    return;
+                }
+
+                selected
+                    .filter(u => u.fullName.toLowerCase().includes(term) || u.email.toLowerCase().includes(term))
+                    .forEach(u => {
+                        const row = document.createElement('div');
+                        row.className = 'rm-user-row' + (u.id === activeUserId ? ' active' : '');
+                        row.textContent = u.fullName;
+                        row.addEventListener('click', () => selectUser(u.id));
+                        container.appendChild(row);
+                    });
+            }
+
+            async function selectUser(userId) {
+                activeUserId = userId;
+                renderSelectedUsers(document.getElementById('rm-selected-search').value);
+
+                const permContainer = document.getElementById('rm-permissions');
+                permContainer.innerHTML = '<div class="text-muted small p-3">Loading...</div>';
+                document.getElementById('rm-save-wrap').style.display = 'none';
+                document.getElementById('rm-perm-search').disabled = true;
+
+                const res = await fetch(`/RoleManagement/Permissions?userId=${encodeURIComponent(userId)}`);
+                if (!res.ok) {
+                    permContainer.innerHTML = '<div class="text-danger small p-3">Could not load permissions.</div>';
+                    return;
+                }
+                const data = await res.json();
+                currentPermissions = data.permissions;
+                isWildcardUser = data.isWildcard;
+
+                if (isWildcardUser) {
+                    permContainer.innerHTML = '<div class="text-muted small p-3">This user has full access to every feature (Admin role).</div>';
+                    return;
+                }
+
+                document.getElementById('rm-save-wrap').style.display = '';
+                document.getElementById('rm-perm-search').disabled = false;
+                renderPermissions('');
+            }
+
+            function renderPermissions(filter) {
+                const term = (filter || '').toLowerCase();
+                const container = document.getElementById('rm-permissions');
+                container.innerHTML = '';
+
+                let lastGroup = null;
+                currentPermissions
+                    .filter(p => p.displayName.toLowerCase().includes(term))
+                    .forEach(p => {
+                        if (p.groupName !== lastGroup) {
+                            const label = document.createElement('div');
+                            label.className = 'rm-perm-group-label';
+                            label.textContent = p.groupName;
+                            container.appendChild(label);
+                            lastGroup = p.groupName;
+                        }
+                        const row = document.createElement('div');
+                        row.className = 'rm-perm-row';
+                        row.innerHTML = `
+                            <input type="checkbox" class="form-check-input" data-key="${p.key}" ${p.granted ? 'checked' : ''} />
+                            <span>${p.displayName}</span>
+                        `;
+                        container.appendChild(row);
+                    });
+            }
+
+            async function savePermissions() {
+                if (!activeUserId || isWildcardUser) return;
+
+                const checked = Array.from(document.querySelectorAll('#rm-permissions input[type="checkbox"]:checked'))
+                    .map(cb => cb.getAttribute('data-key'));
+
+                const btn = document.getElementById('rm-save-btn');
+                btn.disabled = true;
+                btn.textContent = 'Saving...';
+
+                try {
+                    const res = await fetch('/RoleManagement/SavePermissions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': antiforgeryToken()
+                        },
+                        body: JSON.stringify({ userId: activeUserId, permissionKeys: checked })
+                    });
+
+                    if (res.ok) {
+                        btn.textContent = 'Saved ✓';
+                        setTimeout(() => { btn.textContent = 'Save Permissions'; btn.disabled = false; }, 1200);
+                    } else {
+                        const err = await res.json().catch(() => ({}));
+                        alert(err.message || 'Could not save permissions.');
+                        btn.textContent = 'Save Permissions';
+                        btn.disabled = false;
+                    }
+                } catch {
+                    alert('Network error while saving permissions.');
+                    btn.textContent = 'Save Permissions';
+                    btn.disabled = false;
+                }
+            }
+
+            document.getElementById('rm-all-search').addEventListener('input', e => renderAllUsers(e.target.value));
+            document.getElementById('rm-selected-search').addEventListener('input', e => renderSelectedUsers(e.target.value));
+            document.getElementById('rm-perm-search').addEventListener('input', e => renderPermissions(e.target.value));
+            document.getElementById('rm-save-btn').addEventListener('click', savePermissions);
+
+            renderAllUsers('');
+            renderSelectedUsers('');
+        })();
+    </script>
+}
