@@ -28,6 +28,45 @@ namespace SaaSInventoryManagement.Controllers
             return View(users);
         }
 
+        //  permission checklist for one user───────────────
+        [HttpGet]
+        public async Task<IActionResult> Permissions(string userId)
+        {
+            var targetUser = await GetTenantUserAsync(userId);
+            if (targetUser is null)
+                return NotFound();
+
+            var roles = await _userManager.GetRolesAsync(targetUser);
+            var isWildcard = roles.Contains("TenantAdmin") || roles.Contains("SuperAdmin");
+
+            var grantedKeys = isWildcard
+                ? new HashSet<string>()
+                : (await _db.UserPermissions
+                    .Where(up => up.UserId == userId)
+                    .Select(up => up.Permission.Key)
+                    .ToListAsync())
+                    .ToHashSet();
+
+            var catalog = await _db.Permissions
+                .Where(p => p.IsActive)
+                .OrderBy(p => p.SortOrder)
+                .ToListAsync();
+
+            var response = new UserPermissionsResponseVm
+            {
+                IsWildcard = isWildcard,
+                Permissions = catalog.Select(p => new PermissionCheckItemVm
+                {
+                    Key = p.Key,
+                    DisplayName = p.DisplayName,
+                    GroupName = p.GroupName,
+                    Granted = isWildcard || grantedKeys.Contains(p.Key)
+                }).ToList()
+            };
+
+            return Json(response);
+        }
+
         private async Task<List<RoleManagementUserVm>> GetTenantUsersAsync()
         {
             IQueryable<Applicationuser> query = _db.Users.Where(u => u.TenantId != null);
@@ -52,5 +91,16 @@ namespace SaaSInventoryManagement.Controllers
             }
             return result;
         }
+        private async Task<Applicationuser?> GetTenantUserAsync(string userId)
+        {
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user is null)
+                return null;
+
+            if (!_tenantProvider.IsSuperAdmin && user.TenantId != _tenantProvider.TenantId)
+                return null;
+
+            return user;
         }
+    }
 }
