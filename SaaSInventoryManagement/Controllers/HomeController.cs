@@ -20,9 +20,10 @@ namespace SaaSInventoryManagement.Controllers
             _cache = cache;
             _navigation = navigation;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var nav = await _navigation.GetNavigationAsync(User);
+            return View(nav);
         }
 
         public IActionResult Privacy()
