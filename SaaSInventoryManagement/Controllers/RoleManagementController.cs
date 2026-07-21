@@ -16,11 +16,14 @@ namespace SaaSInventoryManagement.Controllers
         private readonly UserManager<Applicationuser> _userManager;
         private readonly ITenantProvider _tenantProvider;
 
-        public RoleManagementController(ApplicationDbContext db, ITenantProvider tenantProvider, UserManager<Applicationuser> userManager)
+        public RoleManagementController(
+            ApplicationDbContext db,
+            UserManager<Applicationuser> userManager,
+            ITenantProvider tenantProvider)
         {
             _db = db;
-            _tenantProvider = tenantProvider;
             _userManager = userManager;
+            _tenantProvider = tenantProvider;
         }
 
         public async Task<IActionResult> Index()
@@ -29,7 +32,54 @@ namespace SaaSInventoryManagement.Controllers
             return View(users);
         }
 
-        //  permission checklist for one user───────────────
+        [Authorize(Roles = "TenantAdmin")]
+        [HttpGet]
+        public IActionResult Create() => View(new CreateUserViewModel());
+
+        [Authorize(Roles = "TenantAdmin")]
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateUserViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            if (_tenantProvider.TenantId is null)
+            {
+                ModelState.AddModelError(string.Empty, "No tenant is resolved for your account.");
+                return View(model);
+            }
+
+            if (await _userManager.FindByEmailAsync(model.Email) != null)
+            {
+                ModelState.AddModelError(nameof(model.Email), "That email is already registered.");
+                return View(model);
+            }
+
+            var user = new Applicationuser
+            {
+                FirstName = model.FirstName.Trim(),
+                LastName = model.LastName.Trim(),
+                UserName = model.Email.Trim(),
+                Email = model.Email.Trim(),
+                TenantId = _tenantProvider.TenantId.Value,
+                EmailConfirmed = true
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError(string.Empty, error.Description);
+
+                return View(model);
+            }
+
+            await _userManager.AddToRoleAsync(user, "User");
+
+            TempData["Success"] = $"User {user.Email} created.";
+            return RedirectToAction(nameof(Index));
+        }
+
         [HttpGet]
         public async Task<IActionResult> Permissions(string userId)
         {
@@ -118,11 +168,11 @@ namespace SaaSInventoryManagement.Controllers
 
             await _db.SaveChangesAsync();
 
-            // Forces a fresh cookie with up-to-date "perm" claims within
             await _userManager.UpdateSecurityStampAsync(targetUser);
 
             return Json(new { success = true });
         }
+
 
         private async Task<List<RoleManagementUserVm>> GetTenantUsersAsync()
         {
@@ -146,8 +196,10 @@ namespace SaaSInventoryManagement.Controllers
                     IsSelected = user.IsPermissionManaged
                 });
             }
+
             return result;
         }
+
         private async Task<Applicationuser?> GetTenantUserAsync(string userId)
         {
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
