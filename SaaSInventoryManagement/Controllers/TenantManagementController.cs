@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SaaSInventoryManagement.Infrastructure.Authorization;
 using SaaSInventoryManagement.Models;
 using SaaSInventoryManagement.Models.Identity;
 using SaaSInventoryManagement.ViewModels.TenantManagement;
+using System.Security.Claims;
 
 namespace SaaSInventoryManagement.Controllers
 {
@@ -13,11 +15,13 @@ namespace SaaSInventoryManagement.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<Applicationuser> _userManager;
+        private readonly SignInManager<Applicationuser> _signInManager;
 
-        public TenantManagementController(ApplicationDbContext db, UserManager<Applicationuser> userManager)
+        public TenantManagementController(ApplicationDbContext db, UserManager<Applicationuser> userManager, SignInManager<Applicationuser> signInManager)
         {
             _db = db;
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         public async Task<IActionResult> Index()
@@ -97,6 +101,27 @@ namespace SaaSInventoryManagement.Controllers
 
             TempData["Success"] = $"Tenant \"{tenant.Name}\" created with admin {admin.Email}.";
             return RedirectToAction(nameof(Index));
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Impersonate(int tenantId)
+        {
+            var tenantAdmins = await _userManager.GetUsersInRoleAsync("TenantAdmin");
+            var target = tenantAdmins.FirstOrDefault(u => u.TenantId == tenantId);
+
+            if (target is null)
+            {
+                TempData["Error"] = "This tenant has no admin account to impersonate.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var superAdminId = _userManager.GetUserId(User)!;
+
+            await _signInManager.SignInWithClaimsAsync(target, isPersistent: false, new[]
+            {
+                new Claim(ImpersonationClaimTypes.ImpersonatorId, superAdminId)
+            });
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }
