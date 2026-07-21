@@ -1,18 +1,22 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using SaaSInventoryManagement.Infrastructure.Authorization;
 using SaaSInventoryManagement.Models.Identity;
 using SaaSInventoryManagement.ViewModels.Account;
+using System.Security.Claims;
 
 namespace SaaSInventoryManagement.Controllers
 {
     public class AccountController : Controller
     {
         private readonly SignInManager<Applicationuser> _signInManager;
+        private readonly UserManager<Applicationuser> _userManager;
 
-        public AccountController(SignInManager<Applicationuser> signInManager)
+        public AccountController(SignInManager<Applicationuser> signInManager, UserManager<Applicationuser> userManager)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         [AllowAnonymous]
@@ -66,5 +70,24 @@ namespace SaaSInventoryManagement.Controllers
         [AllowAnonymous]
         [HttpGet]
         public IActionResult AccessDenied() => View();
+
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> StopImpersonation()
+        {
+            var impersonatorId = User.FindFirstValue(ImpersonationClaimTypes.ImpersonatorId);
+            if (string.IsNullOrEmpty(impersonatorId))
+                return RedirectToAction("Index", "Home");
+
+            var originalUser = await _userManager.FindByIdAsync(impersonatorId);
+            if (originalUser is null)
+            {
+                await _signInManager.SignOutAsync();
+                return RedirectToAction(nameof(Login));
+            }
+
+            await _signInManager.SignInAsync(originalUser, isPersistent: false);
+            return RedirectToAction("Index", "TenantManagement");
+        }
     }
 }
