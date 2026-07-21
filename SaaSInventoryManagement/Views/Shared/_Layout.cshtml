@@ -47,6 +47,18 @@
         </aside>
 
         <div class="main-area">
+             @{
+                var impersonatorId = User.FindFirst(SaaSInventoryManagement.Infrastructure.Authorization.ImpersonationClaimTypes.ImpersonatorId)?.Value;
+            }
+            @if (!string.IsNullOrEmpty(impersonatorId))
+            {
+                <div class="alert alert-warning d-flex align-items-center justify-content-between mb-0 rounded-0">
+                    <span><i class="fa-solid fa-user-secret me-2"></i>You're impersonating <strong>@tenantName</strong> as <strong>@User.Identity!.Name</strong>.</span>
+                    <form asp-controller="Account" asp-action="StopImpersonation" method="post" class="ms-2">
+                        <button type="submit" class="btn btn-sm btn-warning">Return to Super Admin</button>
+                    </form>
+                </div>
+            }
             <header class="topbar">
                 <button class="sidebar-toggle d-lg-none" type="button" onclick="document.querySelector('.app-shell').classList.toggle('sidebar-open')">
                     <i class="fa-solid fa-bars"></i>
@@ -59,7 +71,7 @@
             </main>
 
             <footer class="content-footer text-muted">
-                &copy; @DateTime.Now.Year - InventoryWithAI
+                &copy; @DateTime.Now.Year - InventoryManagement
             </footer>
         </div>
     </div>
