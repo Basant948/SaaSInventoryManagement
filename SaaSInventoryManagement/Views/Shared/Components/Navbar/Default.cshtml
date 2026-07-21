@@ -22,6 +22,12 @@
     bool IsRoleManagementActive() =>
         currentController.Equals("RoleManagement", StringComparison.OrdinalIgnoreCase);
 
+    bool IsAuditLogActive() =>
+        currentController.Equals("AuditLog", StringComparison.OrdinalIgnoreCase);
+
+    bool IsTenantManagementActive() =>
+        currentController.Equals("TenantManagement", StringComparison.OrdinalIgnoreCase);
+
     string GroupIcon(string groupName) => groupName switch
     {
         "Catalog" => "fa-solid fa-box",
@@ -71,18 +77,37 @@
         </li>
     }
 
+    @if (User.IsInRole("SuperAdmin"))
+    {
+        <li class="sidebar-section-label">Platform</li>
+        <li class="sidebar-item">
+            <a class="sidebar-link @(IsTenantManagementActive() ? "active" : "")" asp-controller="TenantManagement" asp-action="Index">
+                <i class="fa-solid fa-building"></i> <span>Tenants</span>
+            </a>
+        </li>
+    }
+
     @if (adminGroup != null)
     {
         <li class="sidebar-section-label">Admin</li>
         foreach (var item in adminGroup.Items)
         {
             var isUserManage = item.Key == "inv.users.manage";
-            var active = isUserManage ? IsRoleManagementActive() : IsFeatureActive(item.Key);
+            var isAuditLogs = item.Key == "inv.auditlogs.view";
+            var active = isUserManage ? IsRoleManagementActive()
+                       : isAuditLogs ? IsAuditLogActive()
+                       : IsFeatureActive(item.Key);
 
             <li class="sidebar-item">
                 @if (isUserManage)
                 {
                     <a class="sidebar-link @(active ? "active" : "")" asp-controller="RoleManagement" asp-action="Index">
+                        <i class="@item.IconClass"></i> <span>@item.DisplayName</span>
+                    </a>
+                }
+                else if (isAuditLogs)
+                {
+                    <a class="sidebar-link @(active ? "active" : "")" asp-controller="AuditLog" asp-action="Index">
                         <i class="@item.IconClass"></i> <span>@item.DisplayName</span>
                     </a>
                 }
@@ -96,3 +121,4 @@
         }
     }
 </ul>
+
