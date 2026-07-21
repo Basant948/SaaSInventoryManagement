@@ -55,6 +55,13 @@
                             }
                         </td>
                         <td>@tenant.CreatedAt.ToString("yyyy-MM-dd")</td>
+                        <td class="text-end">
+                            <form asp-controller="TenantManagement" asp-action="Impersonate" asp-route-tenantId="@tenant.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-primary" title="Sign in as this tenant's admin">
+                                    <i class="fa-solid fa-user-secret me-1"></i> Impersonate
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                 }
             </tbody>
