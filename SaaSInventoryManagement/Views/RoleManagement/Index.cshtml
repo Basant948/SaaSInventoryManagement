@@ -4,11 +4,25 @@
     ViewData["Title"] = "Role Management";
 }
 
-<h1 class="h3 mb-4">Role Management</h1>
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0">Role Management</h1>
+    @if (User.IsInRole("TenantAdmin"))
+    {
+        <a class="btn btn-primary" asp-controller="RoleManagement" asp-action="Create">
+            <i class="fa-solid fa-user-plus me-1"></i> New User
+        </a>
+    }
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
 
 <form id="rm-antiforgery">@Html.AntiForgeryToken()</form>
 
 <div class="row g-3">
+    <!-- ── All Users ─────────────────────────────────────────────────────── -->
     <div class="col-lg-4">
         <div class="rm-pane">
             <div class="rm-pane-header">All Users</div>
@@ -19,7 +33,7 @@
         </div>
     </div>
 
-    <!-- Selected Users -->
+    <!-- ── Selected Users ────────────────────────────────────────────────── -->
     <div class="col-lg-4">
         <div class="rm-pane">
             <div class="rm-pane-header">Selected Users</div>
@@ -30,7 +44,7 @@
         </div>
     </div>
 
-    <!-- Permissions -->
+    <!-- ── Permissions ───────────────────────────────────────────────────── -->
     <div class="col-lg-4">
         <div class="rm-pane">
             <div class="rm-pane-header d-flex align-items-center justify-content-between">
@@ -51,7 +65,7 @@
 
 @section Scripts {
     <script>
-        (function () {
+        (function() {
             const allUsers = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }));
             const selectedIds = new Set(allUsers.filter(u => u.isSelected).map(u => u.id)); // seeded from DB — persists across reloads
             let activeUserId = null;
