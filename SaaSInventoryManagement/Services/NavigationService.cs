@@ -22,6 +22,9 @@ namespace SaaSInventoryManagement.Services
 
         public async Task<List<NavGroupDto>> GetNavigationAsync(ClaimsPrincipal user)
         {
+            if (user.IsInRole("SuperAdmin"))
+                return new List<NavGroupDto>();
+
             var catalog = await GetCatalogAsync();
 
             var permClaims = user.FindAll(PermissionClaimTypes.Permission).Select(c => c.Value).ToHashSet();
