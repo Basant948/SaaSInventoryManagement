@@ -1,0 +1,63 @@
+﻿@using SaaSInventoryManagement.ViewModels.TenantManagement
+@model List<TenantListItemVm>
+@{
+    ViewData["Title"] = "Tenants";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0">Tenants</h1>
+    <a class="btn btn-primary" asp-controller="TenantManagement" asp-action="Create">
+        <i class="fa-solid fa-plus me-1"></i> New Tenant
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Slug</th>
+                    <th>Users</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count == 0)
+                {
+                    <tr><td colspan="6" class="text-muted text-center py-4">No tenants yet.</td></tr>
+                }
+                @foreach (var tenant in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">@tenant.Name</td>
+                        <td><code>@tenant.Slug</code></td>
+                        <td>@tenant.UserCount</td>
+                        <td>
+                            @if (tenant.IsActive)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactive</span>
+                            }
+                        </td>
+                        <td>@tenant.CreatedAt.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
