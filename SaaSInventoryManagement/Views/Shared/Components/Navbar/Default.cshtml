@@ -3,12 +3,12 @@
 
 @{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
-    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
-    var currentKey = ViewContext.RouteData.Values["key"]?.ToString();
+    var currentAction     = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    var currentKey        = ViewContext.RouteData.Values["key"]?.ToString();
 
     var dashboardGroup = Model.FirstOrDefault(g => g.GroupName == "General");
-    var adminGroup = Model.FirstOrDefault(g => g.GroupName == "Administration");
-    var featureGroups = Model.Where(g => g.GroupName != "General" && g.GroupName != "Administration").ToList();
+    var adminGroup     = Model.FirstOrDefault(g => g.GroupName == "Administration");
+    var featureGroups  = Model.Where(g => g.GroupName != "General" && g.GroupName != "Administration").ToList();
 
     bool IsFeatureActive(string key) =>
         currentController.Equals("Home", StringComparison.OrdinalIgnoreCase) &&
@@ -30,12 +30,12 @@
 
     string GroupIcon(string groupName) => groupName switch
     {
-        "Catalog" => "fa-solid fa-box",
-        "Inventory" => "fa-solid fa-warehouse",
-        "Procurement" => "fa-solid fa-truck",
-        "Sales" => "fa-solid fa-cart-shopping",
-        "Reports" => "fa-solid fa-chart-simple",
-        _ => "fa-solid fa-layer-group"
+        "Catalog"      => "fa-solid fa-box",
+        "Inventory"    => "fa-solid fa-warehouse",
+        "Procurement"  => "fa-solid fa-truck",
+        "Sales"        => "fa-solid fa-cart-shopping",
+        "Reports"      => "fa-solid fa-chart-simple",
+        _              => "fa-solid fa-layer-group"
     };
 }
 
@@ -121,4 +121,3 @@
         }
     }
 </ul>
-
