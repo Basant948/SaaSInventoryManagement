@@ -1,0 +1,118 @@
+﻿@using SaaSInventoryManagement.ViewModels.AuditLog
+@using SaaSInventoryManagement.Enums
+@model AuditLogIndexVm
+@{
+    ViewData["Title"] = "Audit Logs";
+}
+
+<h1 class="h3 mb-4">Audit Logs</h1>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <form asp-controller="AuditLog" asp-action="Index" method="get" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small text-muted">Entity</label>
+                <select name="EntityName" class="form-select">
+                    <option value="">All entities</option>
+                    @foreach (var name in Model.EntityNames)
+                    {
+                        <option value="@name" selected="@(name == Model.Filter.EntityName)">@name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small text-muted">Action</label>
+                <select name="Action" class="form-select">
+                    <option value="">All actions</option>
+                    @foreach (var action in Enum.GetValues<AuditAction>())
+                    {
+                        <option value="@action" selected="@(action == Model.Filter.Action)">@action</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small text-muted">From</label>
+                <input name="From" type="date" class="form-control" value="@Model.Filter.From?.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small text-muted">To</label>
+                <input name="To" type="date" class="form-control" value="@Model.Filter.To?.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a class="btn btn-outline-secondary" asp-controller="AuditLog" asp-action="Index">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>When</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Entity</th>
+                    <th>Entity Id</th>
+                    <th>IP Address</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items.Count == 0)
+                {
+                    <tr><td colspan="7" class="text-muted text-center py-4">No audit entries match this filter.</td></tr>
+                }
+                @foreach (var entry in Model.Items)
+                {
+                    <tr>
+                        <td>@entry.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@entry.Username</td>
+                        <td>
+                            @{
+                                var badgeClass = entry.Action switch
+                                {
+                                    AuditAction.Create => "bg-success",
+                                    AuditAction.Update => "bg-warning text-dark",
+                                    AuditAction.Delete => "bg-danger",
+                                    _ => "bg-secondary"
+                                };
+                            }
+                            <span class="badge @badgeClass">@entry.Action</span>
+                        </td>
+                        <td>@entry.EntityName</td>
+                        <td><code>@entry.EntityId</code></td>
+                        <td>@entry.IPAddress</td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-outline-secondary" asp-controller="AuditLog" asp-action="Details" asp-route-id="@entry.Id">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav class="mt-3">
+        <ul class="pagination">
+            @for (var p = 1; p <= Model.TotalPages; p++)
+            {
+                <li class="page-item @(p == Model.Filter.Page ? "active" : "")">
+                    <a class="page-link"
+                       asp-controller="AuditLog" asp-action="Index"
+                       asp-route-Page="@p"
+                       asp-route-EntityName="@Model.Filter.EntityName"
+                       asp-route-Action="@Model.Filter.Action"
+                       asp-route-From="@Model.Filter.From?.ToString("yyyy-MM-dd")"
+                       asp-route-To="@Model.Filter.To?.ToString("yyyy-MM-dd")">@p</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
