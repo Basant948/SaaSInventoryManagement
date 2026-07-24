@@ -243,10 +243,10 @@ SaaSInventoryManagement
 
 📸 Screenshots
 Dashboard
-![Dashboard](https://github.com/Basant948/SaaSInventoryManagement/blob/d6d777f5b2cad686f2c7a5a6e2f843cd2ae792bb/Dashboard.PNG)
+![dashboard](https://github.com/Basant948/SaaSInventoryManagement/blob/9d642c27b44328a7b3bafdec07f99523ba17742d/Dashboard.PNG)
 
 Tenant Management
-![Seq Logs](https://github.com/Basant948/SaaSInventoryManagement/blob/349ac9898a60275ae5191cc6e7fe7c343e795487/Tenantmanagement.PNG)
+![tenantmgt](https://github.com/Basant948/SaaSInventoryManagement/blob/9d642c27b44328a7b3bafdec07f99523ba17742d/Tenantmanagement.PNG)
 
 🚧 Planned Features
 Activity Logging Improvements
