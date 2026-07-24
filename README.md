@@ -98,7 +98,7 @@ All tenants share the same database while remaining fully isolated through:
 | Tenant Write Guards | Prevents cross-tenant INSERT / UPDATE operations |
 | Startup Validation | Ensures tenant isolation configuration |
 
-See **ARCHITECTURE.md** for the full design — request pipeline diagram, ITenantOwned pattern, and tenant write-guard rules.
+📄 See [`ARCHITECTURE.md`](ARCHITECTURE.md) for full design.
 
 ---
 
@@ -123,7 +123,7 @@ The application implements a hybrid authorization model combining:
 | Wildcard permissions                        | ⏳ Planned      |
 | Security Stamp permission refresh           | ⏳ Planned      |
 
-See **ARCHITECTURE-RBAC.md** for the complete RBAC design — permission flow, claims generation, and authorization pipeline.
+📄 See [`ARCHITECTURE-RBAC.md`](ARCHITECTURE-RBAC.md) for detailed RBAC design and UI flow.
 
 ---
 
@@ -166,7 +166,7 @@ This makes it easier to trace the complete lifecycle of a request inside Seq.
 
 ## Example
 
-![Seq Logs](./images/seq-correlation-id.png)
+![Seq Logs](https://github.com/Basant948/SaaSInventoryManagement/blob/c990b31340d69c85b1bdb0e7d2e64f8ed0ff9445/seq.PNG)
 
 ---
 
