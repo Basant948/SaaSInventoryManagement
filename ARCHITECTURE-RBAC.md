@@ -212,7 +212,7 @@ Tenant Admin can manage user permissions from the **Role Management** page.
 
 ## Screenshot
 
-> **Place the screenshot below**
+[> **Place the screenshot below**](https://github.com/Basant948/SaaSInventoryManagement/blob/5898d8ae0cdbb5d804faa04955ecb7a42ecf9a2d/rbacc.PNG)
 
 ```md
 ![Role Management](./Images/role-management.png)
