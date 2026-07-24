@@ -1,7 +1,6 @@
-````markdown
 # SaaS Inventory Management
 
-A **multi-tenant SaaS Inventory Management System** built with **ASP.NET Core** that enables multiple organizations (tenants) to securely manage their inventory, warehouses, suppliers, customers, purchases, sales, and stock operations from a single application.
+A **multi-tenant SaaS Inventory Management System** built with **ASP.NET Core** that enables multiple organizations (tenants) to securely manage inventory, warehouses, suppliers, customers, purchases, sales, and stock operations from a single application.
 
 The project is designed using **enterprise-level architecture and best practices** to simulate a real-world SaaS business application.
 
@@ -9,103 +8,130 @@ The project is designed using **enterprise-level architecture and best practices
 
 ---
 
-# Features
+# 🚀 Features
 
-## Enterprise Features
+## 🔐 Enterprise Features
 
-- Multi-Tenant SaaS Architecture
-- Tenant Isolation (Read & Write)
-- Tenant-Based Data Filtering
-- ASP.NET Core Identity
-- Cookie Authentication
-- Database-Driven Role & Permission Management
-- Claims-Based Authorization
-- Audit Logging
-- Dynamic Role Management UI
-- Background Jobs (Hangfire - Planned)
+The system is being developed with enterprise SaaS requirements including security, tenant isolation, authorization, and scalability.
 
----
-
-## Inventory Management
-
-- Product Management
-- Category Management
-- Unit Management
-- Warehouse Management
-- Inventory Tracking
-- Stock Movement History
+Multi-Tenant SaaS Architecture ✅ (core isolation layer implemented)
+Tenant Isolation — read-side (EF Core global query filters) ✅
+Tenant Isolation — write-side (INSERT/UPDATE guards) ✅
+Tenant Registration ✅
+Tenant-Based Data Filtering ✅
+ASP.NET Core Identity ✅
+Cookie Authentication ✅
+Role-Based Authorization ✅
+Database-Driven Permission-Based Authorization ✅
+Audit Logging ✅
+Background Jobs (Hangfire) ⏳
 
 ---
 
-## Sales & Purchasing
+# 📦 Inventory Management
 
-- Supplier Management
-- Customer Management
-- Purchase Orders
-- Sales Orders
-- Purchase Returns
-- Sales Returns
-
----
-
-## Stock Operations
-
-- Stock Transfer
-- Stock Adjustment
-- Low Stock Alerts
+| Feature                | Status     |
+|------------------------|----------- |
+| Product Management     | ⏳ Planned |
+| Category Management    | ⏳ Planned |
+| Unit Management        | ⏳ Planned |
+| Warehouse Management   | ⏳ Planned |
+| Inventory Tracking     | ⏳ Planned |
+| Stock Movement History | ⏳ Planned |
 
 ---
 
-## Dashboard & Reporting
+# 🛒 Sales & Purchasing
 
-- Dashboard
-- Business Reports
-- Notifications
+| Feature             | Status     |
+|---------------------|------------|
+| Supplier Management | ⏳ Planned |
+| Customer Management | ⏳ Planned |
+| Purchase Orders     | ⏳ Planned |
+| Sales Orders        | ⏳ Planned |
+| Purchase Returns    | ⏳ Planned |
+| Sales Returns       | ⏳ Planned |
 
 ---
 
-# Multi-Tenant Architecture
+# 📊 Stock Operations
 
-This application uses the **Shared Database, Shared Schema** multi-tenancy model. All tenants share the same database while remaining fully isolated through tenant-aware query filters, write guards, and claims-based tenant resolution.
+| Feature          | Status     |
+|------------------|------------|
+| Stock Transfer   | ⏳ Planned |
+| Stock Adjustment | ⏳ Planned |
+| Low Stock Alerts | ⏳ Planned |
+
+---
+
+# 📈 Dashboard & Reporting
+
+| Feature          | Status     |
+|------------------|------------|
+| Dashboard        | ✅ Planned |
+| Business Reports | ⏳ Planned |
+| Notifications    | ⏳ Planned |
+
+---
+
+# 🏢 Multi-Tenant Architecture
+
+This application uses the **Shared Database, Shared Schema** multi-tenancy model.
+
+All tenants share the same database while remaining fully isolated through:
+
+- Tenant-aware query filters
+- Tenant-aware write protection
+- Claims-based tenant resolution
+- EF Core global query filters
 
 ## Current Implementation
 
-- Tenant model and `ITenantOwned` interface
-- `TenantProvider` for resolving the current tenant
-- `TenantClaimsPrincipalFactory`
-- `TenantMiddleware`
-- EF Core Global Query Filters
-- Automatic Tenant Write Guards
-- Startup Validation for Tenant Safety
+| Component | Purpose |
+|---|---|
+| `Tenant` Model | Represents organizations using the SaaS platform |
+| `ITenantOwned` Interface | Identifies tenant-owned entities |
+| `TenantProvider` | Resolves the current tenant |
+| `TenantClaimsPrincipalFactory` | Adds tenant information into user claims |
+| `TenantMiddleware` | Establishes tenant context during requests |
+| EF Core Global Query Filters | Automatically filters tenant data |
+| Tenant Write Guards | Prevents cross-tenant INSERT / UPDATE operations |
+| Startup Validation | Ensures tenant isolation configuration |
 
-For more details, see **ARCHITECTURE.md**.
+See **ARCHITECTURE.md** for the full design — request pipeline diagram, ITenantOwned pattern, and tenant write-guard rules.
 
 ---
 
-# Role-Based Access Control (RBAC)
+# 🔑 Role-Based Access Control (RBAC)
 
-The application implements a hybrid **Role + Claims-Based Permission** system with a rich management interface.
+The application implements a hybrid authorization model combining:
+
+- ASP.NET Core Identity Roles
+- Database-driven permissions
+- Claims-based authorization
 
 ## Features
 
-- Three-tier roles
-  - SuperAdmin
-  - TenantAdmin
-  - User
-- Database-driven permissions
-- Permission grouping
-- Three-pane Role Management UI
-- Claims-based authorization (zero database queries per request)
-- Wildcard permissions for administrators
-- Instant permission updates using Security Stamp
+| Feature                                     | Status         |
+|---------------------------------------------|----------------|
+| SuperAdmin / TenantAdmin / User roles       | ✅ Designed    |
+| Database-driven permissions                 | ⏳ Planned     |
+| Permission grouping                         | ⏳ Planned     |
+| Three-pane Role Management UI               | ✅ Implemented |
+| Claims-based authorization                  | ✅ Implemented |
+| Zero database permission queries per request| ✅ Implemented |
+| Wildcard permissions                        | ⏳ Planned      |
+| Security Stamp permission refresh           | ⏳ Planned      |
 
-For more details, see **ARCHITECTURE-RBAC.md**.
+See **ARCHITECTURE-RBAC.md** for the complete RBAC design — permission flow, claims generation, and authorization pipeline.
 
 ---
 
-# Architecture
+# 🏗 Architecture
 
 The project follows **Clean Architecture** and enterprise design patterns.
+
+Implemented concepts:
 
 - Clean Architecture
 - Repository Pattern
@@ -118,19 +144,25 @@ The project follows **Clean Architecture** and enterprise design patterns.
 
 ---
 
-# Logging
+# 📝 Logging & Monitoring
 
 The application uses **Serilog** with structured logging.
 
-Logs are written to:
+## Implemented
 
-- Console
-- Seq
+| Feature                       | Status         |
+|-------------------------------|----------------|
+| Structured Logging            | ✅ Implemented |
+| Console Logging               | ✅ Implemented |
+| Seq Integration               | ✅ Implemented |
+| Correlation ID Middleware     | ✅ Implemented |
+| Exception Handling Middleware | ✅ Implemented |
 
 Every request receives a unique **Correlation ID** through `CorrelationIdMiddleware`.
 
-If an exception occurs, the same Correlation ID appears in the logs generated by `ExceptionHandlingMiddleware`, 
-making it easy to trace the complete lifecycle of a request in Seq.
+If an exception occurs, the same Correlation ID appears in logs generated by `ExceptionHandlingMiddleware`.
+
+This makes it easier to trace the complete lifecycle of a request inside Seq.
 
 ## Example
 
@@ -138,7 +170,7 @@ making it easy to trace the complete lifecycle of a request in Seq.
 
 ---
 
-# Tech Stack
+# 🛠 Tech Stack
 
 ## Backend
 
@@ -154,7 +186,7 @@ making it easy to trace the complete lifecycle of a request in Seq.
 - Bootstrap
 - jQuery
 
-## Other
+## Other Tools
 
 - Serilog
 - Seq
@@ -162,7 +194,7 @@ making it easy to trace the complete lifecycle of a request in Seq.
 
 ---
 
-# Project Structure
+# 📂 Project Structure
 
 ```text
 SaaSInventoryManagement
@@ -208,49 +240,26 @@ SaaSInventoryManagement
 ├── wwwroot/
 ├── Migrations/
 └── Program.cs
-```
 
----
+📸 Screenshots
+Dashboard
 
-# Screenshots
+Tenant Management
 
-## Dashboard
-
-![Dashboard](./images/dashboard.png)
-
----
-
-## Tenant Management
-
-![Tenant Management](./images/tenant-management.png)
-
----
-
-# Planned Features
-
-- Activity Logging Improvements
-- Online Payment Integration
-- Multi-language Support
-- REST API
-- JWT Authentication
-- SignalR Notifications
-- Hangfire Background Jobs
-
----
-
-# Getting Started
-
-## Prerequisites
-
-- .NET 8 or .NET 9 SDK
-- SQL Server
-- Visual Studio 2022
-
----
-
-## Installation
-
-```bash
+🚧 Planned Features
+Activity Logging Improvements
+Online Payment Integration
+Multi-language Support
+REST API
+JWT Authentication
+SignalR Notifications
+Hangfire Background Jobs
+🚀 Getting Started
+Prerequisites
+.NET 8 or .NET 9 SDK
+SQL Server
+Visual Studio 2022
+Installation
 git clone https://github.com/Basant948/SaaSInventoryManagement.git
 
 cd SaaSInventoryManagement
@@ -258,41 +267,32 @@ cd SaaSInventoryManagement
 dotnet ef database update
 
 dotnet run
-```
 
-Update the connection string in **appsettings.json** before running the application.
+Update the connection string in appsettings.json before running the application.
 
-Default seeded accounts are available in **SuperAdminSeeder.cs**.
+Default seeded accounts are available in:
 
----
+SuperAdminSeeder.cs
+🗺 Roadmap
+✅ Multi-Tenant SaaS Architecture
+✅ Tenant Isolation
+✅ Advanced RBAC Foundation
+✅ Role Management UI
+✅ Tenant Registration
+⏳ Inventory Modules
+⏳ Sales & Purchasing
+⏳ Dashboard & Reports
+⏳ Audit Logging
+⏳ Hangfire Integration
+⏳ SignalR Notifications
+👨‍💻 Author
 
-# Roadmap
-
-- ✅ Multi-Tenant SaaS Architecture
-- ✅ Tenant Isolation
-- ✅ Advanced RBAC
-- ✅ Role Management UI
-- ⏳ Inventory Modules
-- ⏳ Sales & Purchasing
-- ⏳ Dashboard & Reports
-- ⏳ Hangfire Integration
-- ⏳ SignalR Notifications
-- ⏳ REST API
-- ⏳ JWT Authentication
-
----
-
-# Author
-
-**Basant Ritu Rajbanshi**
+Basant Ritu Rajbanshi
 
 Backend Developer (.NET)
 
 GitHub: https://github.com/Basant948
 
----
+📄 License
 
-# License
-
-This project is built for **learning, portfolio, and professional development** purposes.
-````
+This project is built for learning, portfolio, and professional development purposes.
