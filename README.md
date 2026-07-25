@@ -240,12 +240,12 @@ SaaSInventoryManagement
 ├── wwwroot/
 ├── Migrations/
 └── Program.cs
-
-📸 Screenshots
-Dashboard
+```
+##📸 Screenshots
+### Dashboard
 ![dashboard](https://github.com/Basant948/SaaSInventoryManagement/blob/c3318a51555223401a043bb919235710ecd4d4d9/Dashboard.PNG)
 
-Tenant Management
+### Tenant Management
 ![tenantmgt](https://github.com/Basant948/SaaSInventoryManagement/blob/c3318a51555223401a043bb919235710ecd4d4d9/Tenantmanagement.PNG)
 
 🚧 Planned Features
