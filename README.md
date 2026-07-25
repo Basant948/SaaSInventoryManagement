@@ -14,17 +14,17 @@ The project is designed using **enterprise-level architecture and best practices
 
 The system is being developed with enterprise SaaS requirements including security, tenant isolation, authorization, and scalability.
 
-Multi-Tenant SaaS Architecture ✅ (core isolation layer implemented)
-Tenant Isolation — read-side (EF Core global query filters) ✅
-Tenant Isolation — write-side (INSERT/UPDATE guards) ✅
-Tenant Registration ✅
-Tenant-Based Data Filtering ✅
-ASP.NET Core Identity ✅
-Cookie Authentication ✅
-Role-Based Authorization ✅
-Database-Driven Permission-Based Authorization ✅
-Audit Logging ✅
-Background Jobs (Hangfire) ⏳
+- Multi-Tenant SaaS Architecture ✅ (core isolation layer implemented)
+- Tenant Isolation — read-side (EF Core global query filters) ✅
+- Tenant Isolation — write-side (INSERT/UPDATE guards) ✅
+- Tenant Registration ✅
+- Tenant-Based Data Filtering ✅
+- ASP.NET Core Identity ✅
+- Cookie Authentication ✅
+- Role-Based Authorization ✅
+- Database-Driven Permission-Based Authorization ✅
+- Audit Logging ✅
+- Background Jobs (Hangfire) ⏳
 
 ---
 
@@ -243,10 +243,10 @@ SaaSInventoryManagement
 
 📸 Screenshots
 Dashboard
-![dashboard](https://github.com/Basant948/SaaSInventoryManagement/blob/9d642c27b44328a7b3bafdec07f99523ba17742d/Dashboard.PNG)
+![dashboard](https://github.com/Basant948/SaaSInventoryManagement/blob/c3318a51555223401a043bb919235710ecd4d4d9/Dashboard.PNG)
 
 Tenant Management
-![tenantmgt](https://github.com/Basant948/SaaSInventoryManagement/blob/9d642c27b44328a7b3bafdec07f99523ba17742d/Tenantmanagement.PNG)
+![tenantmgt](https://github.com/Basant948/SaaSInventoryManagement/blob/c3318a51555223401a043bb919235710ecd4d4d9/Tenantmanagement.PNG)
 
 🚧 Planned Features
 Activity Logging Improvements
