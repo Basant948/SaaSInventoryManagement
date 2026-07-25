@@ -248,21 +248,21 @@ SaaSInventoryManagement
 ### Tenant Management
 ![tenantmgt](https://github.com/Basant948/SaaSInventoryManagement/blob/c3318a51555223401a043bb919235710ecd4d4d9/Tenantmanagement.PNG)
 
-🚧 Planned Features
-Activity Logging Improvements
-Online Payment Integration
-Multi-language Support
-REST API
-JWT Authentication
-SignalR Notifications
-Hangfire Background Jobs
-🚀 Getting Started
-Prerequisites
-.NET 8 or .NET 9 SDK
-SQL Server
-Visual Studio 2022
-Installation
-git clone https://github.com/Basant948/SaaSInventoryManagement.git
+## 🚧 Planned Features
+-Activity Logging Improvements
+-Online Payment Integration
+-Multi-language Support
+-REST API
+-JWT Authentication
+-SignalR Notifications
+-Hangfire Background Jobs
+## 🚀 Getting Started
+-Prerequisites
+-.NET 8 or .NET 9 SDK
+-SQL Server
+-Visual Studio 2022
+-Installation
+-git clone https://github.com/Basant948/SaaSInventoryManagement.git
 
 cd SaaSInventoryManagement
 
@@ -272,21 +272,21 @@ dotnet run
 
 Update the connection string in appsettings.json before running the application.
 
-Default seeded accounts are available in:
+### Default seeded accounts are available in:
 
 SuperAdminSeeder.cs
 🗺 Roadmap
-✅ Multi-Tenant SaaS Architecture
-✅ Tenant Isolation
-✅ Advanced RBAC Foundation
-✅ Role Management UI
-✅ Tenant Registration
-⏳ Inventory Modules
-⏳ Sales & Purchasing
-⏳ Dashboard & Reports
-⏳ Audit Logging
-⏳ Hangfire Integration
-⏳ SignalR Notifications
+-✅ Multi-Tenant SaaS Architecture
+-✅ Tenant Isolation
+-✅ Advanced RBAC Foundation
+-✅ Role Management UI
+-✅ Tenant Registration
+-⏳ Inventory Modules
+-⏳ Sales & Purchasing
+-⏳ Dashboard & Reports
+-⏳ Audit Logging
+-⏳ Hangfire Integration
+-⏳ SignalR Notifications
 👨‍💻 Author
 
 Basant Ritu Rajbanshi
