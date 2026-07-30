@@ -26,7 +26,7 @@ This project is designed using **enterprise-level architecture and best practice
 
 ## Inventory Management
 
-* Category Management ✅
+* Product Management
 * Category Management
 * Unit Management
 * Warehouse Management
@@ -79,10 +79,10 @@ Implemented so far:
 This project follows **Clean Architecture** with enterprise design patterns to ensure scalability, maintainability, and testability.
 
 * Clean Architecture
-* Repository Pattern ✅
-* Generic Repository ✅
-* Specific Repository ✅
-* Unit of Work Pattern ✅
+* Repository Pattern
+* Generic Repository
+* Specific Repository
+* Unit of Work Pattern
 * Dependency Injection
 * Service Layer
 * DTO Pattern
@@ -123,9 +123,7 @@ This project follows **Clean Architecture** with enterprise design patterns to e
 
 ---
 
-## Project Structure
-
-```text
+# Project Structure
 SaaSInventoryManagement
 │
 ├── Controllers/
@@ -133,58 +131,31 @@ SaaSInventoryManagement
 ├── Data/
 │   └── ApplicationDbContext.cs
 │
-├── Extensions/
-│   ├── ModelBuilderTenantExtensions.cs
-│   │   └── Global tenant query filters and tenant validation
-│   │
-│   └── ChangeTrackerTenantExtensions.cs
-│       └── Tenant write guards for insert/update operations
+├── Extensions/                                    # Moved to root level
+│   ├── ModelBuilderTenantExtensions.cs            # applies global tenant query filters,
+│   │                                            # validates no unprotected TenantId entities
+│   └── ChangeTrackerTenantExtensions.cs          # enforces tenant write guards on insert/update
 │
 ├── Middleware/
-│   └── TenantMiddleware.cs
-│       └── Resolves and validates tenant per request
+│   └── TenantMiddleware.cs                       # blocks requests with no resolvable tenant
 │
 ├── Models/
 │   ├── Base/
-│   │   └── ITenantOwned.cs
-│   │       └── Marker interface for tenant-scoped entities
-│   │
+│   │   └── ITenantOwned.cs                       # marker interface for tenant-scoped entities
 │   ├── Identity/
-│   │   └── ApplicationUser.cs
-│   │       └── Extends IdentityUser with user and tenant details
-│   │
-│   └── Tenant.cs
-│       └── Company/organization entity
-│
-├── Repositories/
-│   ├── Interfaces/
-│   │   ├── IGenericRepository.cs
-│   │   ├── IUnitOfWork.cs
-│   │   └── ICategoryRepository.cs
-│   │
-│   ├── GenericRepository.cs
-│   ├── UnitOfWork.cs
-│   └── CategoryRepository.cs
+│   │   └── ApplicationUser.cs                    # extends IdentityUser with FirstName/LastName/TenantId
+│   └── Tenant.cs                                 # tenant (company) entity
 │
 ├── Services/
 │   ├── Interfaces_/
-│   │   └── ITenantProvider.cs
-│   │       └── Resolves current TenantId and SuperAdmin status
-│   │
-│   ├── TenantProvider.cs
-│   │   └── Reads tenant information from claims
-│   │
-│   └── TenantClaimsPrincipalFactory.cs
-│       └── Adds tenant claim during authentication
+│   │   └── ITenantProvider.cs                    # contract for resolving current TenantId / SuperAdmin
+│   ├── TenantProvider.cs                         # reads & caches tenant_id claim per request
+│   └── TenantClaimsPrincipalFactory.cs           # stamps tenant_id claim onto auth cookie at login
 │
 ├── Migrations/
-│
 ├── Views/
-│
-├── wwwroot/
-│
+├── wwwroot/                           # full multi-tenancy design doc
 └── Program.cs
-```
 
 ---
 
