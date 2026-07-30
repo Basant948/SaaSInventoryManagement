@@ -8,38 +8,51 @@ The project is designed using **enterprise-level architecture and best practices
 
 ---
 
-# 🚀 Features
+# Features
 
-## 🔐 Enterprise Features
+## Enterprise Features ⭐
 
-The system is being developed with enterprise SaaS requirements including security, tenant isolation, authorization, and scalability.
+* Multi-Tenant SaaS Architecture ✅ (core isolation layer implemented)
+* Tenant Isolation — read-side (EF Core global query filters) ✅
+* Tenant Isolation — write-side (INSERT/UPDATE guards) ✅
+* Tenant Registration ✅
+* Tenant-Based Data Filtering ✅
+* ASP.NET Core Identity ✅
+* Cookie Authentication ✅
+* Role-Based Authorization ✅
+* Database-Driven Permission-Based Authorization ✅
+* Audit Logging ✅
+* Background Jobs (Hangfire) ⏳
 
-- Multi-Tenant SaaS Architecture ✅ (core isolation layer implemented)
-- Tenant Isolation — read-side (EF Core global query filters) ✅
-- Tenant Isolation — write-side (INSERT/UPDATE guards) ✅
-- Tenant Registration ✅
-- Tenant-Based Data Filtering ✅
-- ASP.NET Core Identity ✅
-- Cookie Authentication ✅
-- Role-Based Authorization ✅
-- Database-Driven Permission-Based Authorization ✅
-- Audit Logging ✅
-- Background Jobs (Hangfire) ⏳
+## Inventory Management
 
-* Category Management ✅
+* Product Management✅
 * Category Management
 * Unit Management
 * Warehouse Management
 * Inventory Tracking
 * Stock Movement History
 
-# 📈 Dashboard & Reporting
+## Sales & Purchasing
 
-| Feature          | Status     |
-|------------------|------------|
-| Dashboard        | ✅ Planned |
-| Business Reports | ⏳ Planned |
-| Notifications    | ⏳ Planned |
+* Supplier Management
+* Customer Management
+* Purchase Orders
+* Sales Orders
+* Purchase Returns
+* Sales Returns
+
+## Stock Operations
+
+* Stock Transfer
+* Stock Adjustment
+* Low Stock Alerts
+
+## Dashboard & Reporting
+
+* Dashboard
+* Business Reports
+* Notifications
 
 ---
 
