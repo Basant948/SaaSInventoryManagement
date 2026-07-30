@@ -10,6 +10,7 @@ using SaaSInventoryManagement.Services.Interfaces_;
 public class ApplicationDbContext : IdentityDbContext<Applicationuser>
 {
     private readonly ITenantProvider _tenantProvider;
+    private readonly ICurrentUserService _currentUserService;
 
     //internal ITenantProvider TenantProvider => _tenantProvider;
     // this above OR this downn works same.needed for the extension methods to access the tenant provider from the context.
@@ -18,9 +19,10 @@ public class ApplicationDbContext : IdentityDbContext<Applicationuser>
         get { return _tenantProvider; }
     }
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContext, ITenantProvider tenantProvider) : base(dbContext)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContext, ITenantProvider tenantProvider, ICurrentUserService currentUserService) : base(dbContext)
     {
         _tenantProvider = tenantProvider;
+        _currentUserService = currentUserService;
     }
 
     public DbSet<Tenant> Tenants { get; set; }
@@ -28,6 +30,7 @@ public class ApplicationDbContext : IdentityDbContext<Applicationuser>
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<UserPermission> UserPermissions { get; set; }
     public DbSet<SeedHistory> SeedHistory { get; set; }
+    public DbSet<Category> Categories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -37,18 +40,25 @@ public class ApplicationDbContext : IdentityDbContext<Applicationuser>
         builder.ApplyConfiguration(new PermissionConfiguration());
         builder.ApplyConfiguration(new UserPermissionConfiguration());
 
-        builder.ApplyTenantQueryFilters(this);   
+        builder.ApplyTenantQueryFilters(this);
+
+        builder.ApplySoftDeleteQueryFilters();
+
         builder.EnsureNoUnprotectedTenantEntities();
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
+        ChangeTracker.ApplySoftDeleteInterception(_currentUserService.UserId);
+
         ChangeTracker.ApplyTenantWriteGuards(_tenantProvider);
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
 
     public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
+        ChangeTracker.ApplySoftDeleteInterception(_currentUserService.UserId);
+
         ChangeTracker.ApplyTenantWriteGuards(_tenantProvider);
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }

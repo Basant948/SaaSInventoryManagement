@@ -28,6 +28,9 @@
     bool IsTenantManagementActive() =>
         currentController.Equals("TenantManagement", StringComparison.OrdinalIgnoreCase);
 
+    bool IsCategoryActive() =>
+        currentController.Equals("Category", StringComparison.OrdinalIgnoreCase);
+
     string GroupIcon(string groupName) => groupName switch
     {
         "Catalog" => "fa-solid fa-box",
@@ -55,7 +58,8 @@
     @foreach (var group in featureGroups)
     {
         var collapseId = "grp-" + group.GroupName.Replace(" ", "");
-        var groupIsActive = group.Items.Any(i => IsFeatureActive(i.Key));
+        var groupIsActive = group.Items.Any(i => IsFeatureActive(i.Key)) ||
+                             (group.Items.Any(i => i.Key == "inv.categories.view") && IsCategoryActive());
 
         <li class="sidebar-item">
             <a class="sidebar-link" href="#" data-bs-toggle="collapse" data-bs-target="#@collapseId"
@@ -66,11 +70,23 @@
             <ul class="collapse sidebar-submenu @(groupIsActive ? "show" : "")" id="@collapseId">
                 @foreach (var item in group.Items)
                 {
+                    var isCategories = item.Key == "inv.categories.view";
+
                     <li>
-                        <a class="@(IsFeatureActive(item.Key) ? "active" : "")"
-                           asp-controller="Home" asp-action="Feature" asp-route-key="@item.Key">
-                            @item.DisplayName
-                        </a>
+                        @if (isCategories)
+                        {
+                            <a class="@(IsCategoryActive() ? "active" : "")"
+                               asp-controller="Category" asp-action="Index">
+                                @item.DisplayName
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="@(IsFeatureActive(item.Key) ? "active" : "")"
+                               asp-controller="Home" asp-action="Feature" asp-route-key="@item.Key">
+                                @item.DisplayName
+                            </a>
+                        }
                     </li>
                 }
             </ul>
@@ -121,4 +137,3 @@
         }
     }
 </ul>
-

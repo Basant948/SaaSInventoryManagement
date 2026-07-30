@@ -26,43 +26,12 @@ The system is being developed with enterprise SaaS requirements including securi
 - Audit Logging ✅
 - Background Jobs (Hangfire) ⏳
 
----
-
-# 📦 Inventory Management
-
-| Feature                | Status     |
-|------------------------|----------- |
-| Product Management     | ⏳ Planned |
-| Category Management    | ⏳ Planned |
-| Unit Management        | ⏳ Planned |
-| Warehouse Management   | ⏳ Planned |
-| Inventory Tracking     | ⏳ Planned |
-| Stock Movement History | ⏳ Planned |
-
----
-
-# 🛒 Sales & Purchasing
-
-| Feature             | Status     |
-|---------------------|------------|
-| Supplier Management | ⏳ Planned |
-| Customer Management | ⏳ Planned |
-| Purchase Orders     | ⏳ Planned |
-| Sales Orders        | ⏳ Planned |
-| Purchase Returns    | ⏳ Planned |
-| Sales Returns       | ⏳ Planned |
-
----
-
-# 📊 Stock Operations
-
-| Feature          | Status     |
-|------------------|------------|
-| Stock Transfer   | ⏳ Planned |
-| Stock Adjustment | ⏳ Planned |
-| Low Stock Alerts | ⏳ Planned |
-
----
+* Category Management ✅
+* Category Management
+* Unit Management
+* Warehouse Management
+* Inventory Tracking
+* Stock Movement History
 
 # 📈 Dashboard & Reporting
 
@@ -133,14 +102,17 @@ The project follows **Clean Architecture** and enterprise design patterns.
 
 Implemented concepts:
 
-- Clean Architecture
-- Repository Pattern
-- Unit of Work
-- Service Layer
-- Dependency Injection
-- Middleware Pipeline
-- Global Exception Handling
-- Claims-Based Authorization
+* Clean Architecture
+* Repository Pattern ✅
+* Generic Repository ✅
+* Specific Repository ✅
+* Unit of Work Pattern ✅
+* Dependency Injection
+* Service Layer
+* DTO Pattern
+* Middleware Pipeline
+* Global Exception Handling
+* FluentValidation
 
 ---
 
@@ -194,7 +166,7 @@ This makes it easier to trace the complete lifecycle of a request inside Seq.
 
 ---
 
-# 📂 Project Structure
+## Project Structure
 
 ```text
 SaaSInventoryManagement
@@ -210,40 +182,56 @@ SaaSInventoryManagement
 │
 ├── Extensions/
 │   ├── ModelBuilderTenantExtensions.cs
+│   │   └── Global tenant query filters and tenant validation
+│   │
 │   └── ChangeTrackerTenantExtensions.cs
-│
-├── Infrastructure/
-│   └── Authorization/
+│       └── Tenant write guards for insert/update operations
 │
 ├── Middleware/
-│   ├── CorrelationIdMiddleware.cs
-│   ├── TenantMiddleware.cs
-│   └── ExceptionHandlingMiddleware.cs
+│   └── TenantMiddleware.cs
+│       └── Resolves and validates tenant per request
 │
 ├── Models/
 │   ├── Base/
+│   │   └── ITenantOwned.cs
+│   │       └── Marker interface for tenant-scoped entities
+│   │
 │   ├── Identity/
-│   ├── Permission.cs
-│   ├── Tenant.cs
-│   └── UserPermission.cs
+│   │   └── ApplicationUser.cs
+│   │       └── Extends IdentityUser with user and tenant details
+│   │
+│   └── Tenant.cs
+│       └── Company/organization entity
+│
+├── Repositories/
+│   ├── Interfaces/
+│   │   ├── IGenericRepository.cs
+│   │   ├── IUnitOfWork.cs
+│   │   └── ICategoryRepository.cs
+│   │
+│   ├── GenericRepository.cs
+│   ├── UnitOfWork.cs
+│   └── CategoryRepository.cs
 │
 ├── Services/
+│   ├── Interfaces_/
+│   │   └── ITenantProvider.cs
+│   │       └── Resolves current TenantId and SuperAdmin status
+│   │
 │   ├── TenantProvider.cs
-│   ├── TenantClaimsPrincipalFactory.cs
-│   ├── NavigationService.cs
-│   └── RoleManagement/
+│   │   └── Reads tenant information from claims
+│   │
+│   └── TenantClaimsPrincipalFactory.cs
+│       └── Adds tenant claim during authentication
+│
+├── Migrations/
 │
 ├── Views/
-│   ├── RoleManagement/
-│   └── Shared/
 │
 ├── wwwroot/
-├── Migrations/
+│
 └── Program.cs
 ```
-##📸 Screenshots
-### Dashboard
-![dashboard](https://github.com/Basant948/SaaSInventoryManagement/blob/c3318a51555223401a043bb919235710ecd4d4d9/Dashboard.PNG)
 
 ### Tenant Management
 ![tenantmgt](https://github.com/Basant948/SaaSInventoryManagement/blob/c3318a51555223401a043bb919235710ecd4d4d9/Tenantmanagement.PNG)
