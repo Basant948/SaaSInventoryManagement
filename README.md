@@ -26,7 +26,7 @@ This project is designed using **enterprise-level architecture and best practice
 
 ## Inventory Management
 
-* Product Management
+* Category Management ✅
 * Category Management
 * Unit Management
 * Warehouse Management
@@ -79,10 +79,10 @@ Implemented so far:
 This project follows **Clean Architecture** with enterprise design patterns to ensure scalability, maintainability, and testability.
 
 * Clean Architecture
-* Repository Pattern
-* Generic Repository
-* Specific Repository
-* Unit of Work Pattern
+* Repository Pattern ✅
+* Generic Repository ✅
+* Specific Repository ✅
+* Unit of Work Pattern ✅
 * Dependency Injection
 * Service Layer
 * DTO Pattern
@@ -145,7 +145,15 @@ SaaSInventoryManagement
 │   ├── Identity/
 │   │   └── ApplicationUser.cs                    # extends IdentityUser with FirstName/LastName/TenantId
 │   └── Tenant.cs                                 # tenant (company) entity
-│
+├── Repositories/
+│   ├── Interfaces/
+│   │   ├── IGenericRepository.cs
+│   │   ├── IUnitOfWork.cs
+│   │   └── ICategoryRepository.cs
+│   │
+│   ├── GenericRepository.cs
+│   ├── UnitOfWork.cs
+│   └── CategoryRepository.cs
 ├── Services/
 │   ├── Interfaces_/
 │   │   └── ITenantProvider.cs                    # contract for resolving current TenantId / SuperAdmin
