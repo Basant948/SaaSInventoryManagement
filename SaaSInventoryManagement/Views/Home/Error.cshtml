@@ -1,0 +1,19 @@
+﻿@using SaaSInventoryManagement.ViewModels
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="text-center">
+    <h1 class="display-4">@Model.StatusCode</h1>
+    <p class="lead">@Model.Message</p>
+
+    @if (Model.ShowCorrelationId)
+    {
+        <p class="text-muted">
+            Reference ID: <code>@Model.CorrelationId</code><br />
+            <small>If you contact support, please include this ID.</small>
+        </p>
+    }
+
+</div>
