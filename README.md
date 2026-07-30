@@ -94,16 +94,16 @@ The application implements a hybrid authorization model combining:
 
 ## Features
 
-| Feature                                     | Status         |
-|---------------------------------------------|----------------|
-| SuperAdmin / TenantAdmin / User roles       | ✅ Designed    |
-| Database-driven permissions                 | ⏳ Planned     |
-| Permission grouping                         | ⏳ Planned     |
+| Feature                                     | Status          |
+|---------------------------------------------|-----------------|
+| SuperAdmin / TenantAdmin / User roles       | ✅ Implemented |
+| Database-driven permissions                 | ✅ Implemented |
+| Permission grouping                         | ✅ Implemented |
 | Three-pane Role Management UI               | ✅ Implemented |
 | Claims-based authorization                  | ✅ Implemented |
 | Zero database permission queries per request| ✅ Implemented |
-| Wildcard permissions                        | ⏳ Planned      |
-| Security Stamp permission refresh           | ⏳ Planned      |
+| Wildcard permissions                        | ✅ Implemented |
+| Security Stamp permission refresh           | ⏳ Planned     |
 
 📄 See [`ARCHITECTURE-RBAC.md`](ARCHITECTURE-RBAC.md) for detailed RBAC design and UI flow.
 
