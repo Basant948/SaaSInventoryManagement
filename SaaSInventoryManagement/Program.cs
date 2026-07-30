@@ -7,9 +7,12 @@ using SaaSInventoryManagement.Data.Interceptors;
 using SaaSInventoryManagement.Infrastructure.Authorization;
 using SaaSInventoryManagement.Middleware;
 using SaaSInventoryManagement.Models.Identity;
+using SaaSInventoryManagement.Repositories;
+using SaaSInventoryManagement.Repositories.Interfaces;
 using SaaSInventoryManagement.Services;
 using SaaSInventoryManagement.Services.Interfaces_;
 using Serilog;
+using UnitOfWork = SaaSInventoryManagement.Repositories.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +25,11 @@ builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<AuditSaveChangesInterceptor>();
 builder.Services.AddScoped<NavigationService>();
+
+// Repositories
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 builder.Services.AddDbContext<ApplicationDbContext>((sp, options) =>
 {
