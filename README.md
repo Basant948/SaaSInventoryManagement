@@ -123,7 +123,9 @@ This project follows **Clean Architecture** with enterprise design patterns to e
 
 ---
 
-# Project Structure
+## Project Structure
+
+```text
 SaaSInventoryManagement
 │
 ├── Controllers/
@@ -131,20 +133,29 @@ SaaSInventoryManagement
 ├── Data/
 │   └── ApplicationDbContext.cs
 │
-├── Extensions/                                    # Moved to root level
-│   ├── ModelBuilderTenantExtensions.cs            # applies global tenant query filters,
-│   │                                            # validates no unprotected TenantId entities
-│   └── ChangeTrackerTenantExtensions.cs          # enforces tenant write guards on insert/update
+├── Extensions/
+│   ├── ModelBuilderTenantExtensions.cs
+│   │   └── Global tenant query filters and tenant validation
+│   │
+│   └── ChangeTrackerTenantExtensions.cs
+│       └── Tenant write guards for insert/update operations
 │
 ├── Middleware/
-│   └── TenantMiddleware.cs                       # blocks requests with no resolvable tenant
+│   └── TenantMiddleware.cs
+│       └── Resolves and validates tenant per request
 │
 ├── Models/
 │   ├── Base/
-│   │   └── ITenantOwned.cs                       # marker interface for tenant-scoped entities
+│   │   └── ITenantOwned.cs
+│   │       └── Marker interface for tenant-scoped entities
+│   │
 │   ├── Identity/
-│   │   └── ApplicationUser.cs                    # extends IdentityUser with FirstName/LastName/TenantId
-│   └── Tenant.cs                                 # tenant (company) entity
+│   │   └── ApplicationUser.cs
+│   │       └── Extends IdentityUser with user and tenant details
+│   │
+│   └── Tenant.cs
+│       └── Company/organization entity
+│
 ├── Repositories/
 │   ├── Interfaces/
 │   │   ├── IGenericRepository.cs
@@ -154,16 +165,26 @@ SaaSInventoryManagement
 │   ├── GenericRepository.cs
 │   ├── UnitOfWork.cs
 │   └── CategoryRepository.cs
+│
 ├── Services/
 │   ├── Interfaces_/
-│   │   └── ITenantProvider.cs                    # contract for resolving current TenantId / SuperAdmin
-│   ├── TenantProvider.cs                         # reads & caches tenant_id claim per request
-│   └── TenantClaimsPrincipalFactory.cs           # stamps tenant_id claim onto auth cookie at login
+│   │   └── ITenantProvider.cs
+│   │       └── Resolves current TenantId and SuperAdmin status
+│   │
+│   ├── TenantProvider.cs
+│   │   └── Reads tenant information from claims
+│   │
+│   └── TenantClaimsPrincipalFactory.cs
+│       └── Adds tenant claim during authentication
 │
 ├── Migrations/
+│
 ├── Views/
-├── wwwroot/                           # full multi-tenancy design doc
+│
+├── wwwroot/
+│
 └── Program.cs
+```
 
 ---
 
