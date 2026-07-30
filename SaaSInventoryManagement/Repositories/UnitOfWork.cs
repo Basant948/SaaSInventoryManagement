@@ -8,11 +8,13 @@ namespace SaaSInventoryManagement.Repositories
         private readonly ApplicationDbContext _db;
         private readonly Dictionary<Type, object> _genericRepositories = new();
 
-        public UnitOfWork(ApplicationDbContext db)
+        public UnitOfWork(ApplicationDbContext db, ICategoryRepository categories)
         {
             _db = db;
+            Categories = categories;
         }
 
+        public ICategoryRepository Categories { get; }
         public IGenericRepository<TEntity> Repository<TEntity>() where TEntity : class, IEntity
         {
             if (!_genericRepositories.TryGetValue(typeof(TEntity), out var repository))
