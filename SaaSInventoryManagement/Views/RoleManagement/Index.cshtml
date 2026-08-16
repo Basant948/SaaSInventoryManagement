@@ -65,11 +65,11 @@
 
 @section Scripts {
     <script>
-        (function() {
+        (function () {
             const allUsers = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }));
-            const selectedIds = new Set(allUsers.filter(u => u.isSelected).map(u => u.id)); // seeded from DB — persists across reloads
+            const selectedIds = new Set(allUsers.filter(u => u.isSelected).map(u => u.id)); 
             let activeUserId = null;
-            let currentPermissions = []; // last loaded permission list for active user
+            let currentPermissions = []; 
             let isWildcardUser = false;
 
             const antiforgeryToken = () => document.querySelector('#rm-antiforgery input[name="__RequestVerificationToken"]').value;
@@ -94,7 +94,6 @@
             }
 
             async function toggleSelected(userId, isChecked) {
-                // Optimistic UI update
                 if (isChecked) {
                     selectedIds.add(userId);
                 } else {
@@ -106,7 +105,6 @@
                 }
                 renderSelectedUsers(document.getElementById('rm-selected-search').value);
 
-                // Persist so this stays selected on next reload/session
                 try {
                     const res = await fetch('/RoleManagement/ToggleSelection', {
                         method: 'POST',
@@ -118,7 +116,6 @@
                     });
                     if (!res.ok) throw new Error('toggle failed');
                 } catch {
-                    // Roll back on failure
                     if (isChecked) selectedIds.delete(userId); else selectedIds.add(userId);
                     renderAllUsers(document.getElementById('rm-all-search').value);
                     renderSelectedUsers(document.getElementById('rm-selected-search').value);
@@ -208,6 +205,46 @@
                         `;
                         container.appendChild(row);
                     });
+
+                applyImpliedViewLocks();
+            }
+
+            function impliedViewKeyFor(key) {
+                const lastDot = key.lastIndexOf('.');
+                if (lastDot < 0) return null;
+                const module = key.slice(0, lastDot);
+                const action = key.slice(lastDot + 1);
+                return action === 'view' ? null : `${module}.view`;
+            }
+
+            function applyImpliedViewLocks() {
+                const checkboxes = document.querySelectorAll('#rm-permissions input[type="checkbox"]');
+                const byKey = new Map(Array.from(checkboxes).map(cb => [cb.getAttribute('data-key'), cb]));
+
+                checkboxes.forEach(cb => {
+                    const viewKey = impliedViewKeyFor(cb.getAttribute('data-key'));
+                    const viewCb = viewKey ? byKey.get(viewKey) : null;
+                    if (!viewCb) return;
+
+                    if (cb.checked) {
+                        viewCb.checked = true;
+                        viewCb.disabled = true;
+                        viewCb.title = 'Required because a permission above depends on it';
+                    } else if (viewCb.disabled) {
+                        const stillNeeded = Array.from(byKey.keys())
+                            .some(k => k !== cb.getAttribute('data-key') && impliedViewKeyFor(k) === viewKey && byKey.get(k).checked);
+                        if (!stillNeeded) {
+                            viewCb.disabled = false;
+                            viewCb.title = '';
+                        }
+                    }
+                });
+            }
+
+            function onPermissionsChanged(e) {
+                if (e.target.matches('#rm-permissions input[type="checkbox"]')) {
+                    applyImpliedViewLocks();
+                }
             }
 
             async function savePermissions() {
@@ -250,6 +287,7 @@
             document.getElementById('rm-selected-search').addEventListener('input', e => renderSelectedUsers(e.target.value));
             document.getElementById('rm-perm-search').addEventListener('input', e => renderPermissions(e.target.value));
             document.getElementById('rm-save-btn').addEventListener('click', savePermissions);
+            document.getElementById('rm-permissions').addEventListener('change', onPermissionsChanged);
 
             renderAllUsers('');
             renderSelectedUsers('');
