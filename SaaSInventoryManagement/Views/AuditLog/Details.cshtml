@@ -1,0 +1,85 @@
+﻿@using SaaSInventoryManagement.ViewModels.AuditLog
+@using SaaSInventoryManagement.Enums
+@using System.Text.Json
+@model AuditLogDetailsVm
+@{
+    ViewData["Title"] = "Audit Log Detail";
+
+    static string Pretty(string? json)
+    {
+        if (string.IsNullOrWhiteSpace(json)) return string.Empty;
+        try
+        {
+            using var doc = JsonDocument.Parse(json);
+            return JsonSerializer.Serialize(doc, new JsonSerializerOptions { WriteIndented = true });
+        }
+        catch
+        {
+            return json;
+        }
+    }
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0">Audit Log Detail</h1>
+    <a class="btn btn-outline-secondary" asp-controller="AuditLog" asp-action="Index">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back to list
+    </a>
+</div>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">When</dt>
+            <dd class="col-sm-9">@Model.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</dd>
+
+            <dt class="col-sm-3">User</dt>
+            <dd class="col-sm-9">@Model.Username</dd>
+
+            <dt class="col-sm-3">Action</dt>
+            <dd class="col-sm-9">
+                @{
+                    var badgeClass = Model.Action switch
+                    {
+                        AuditAction.Create => "bg-success",
+                        AuditAction.Update => "bg-warning text-dark",
+                        AuditAction.Delete => "bg-danger",
+                        _ => "bg-secondary"
+                    };
+                }
+                <span class="badge @badgeClass">@Model.Action</span>
+            </dd>
+
+            <dt class="col-sm-3">Entity</dt>
+            <dd class="col-sm-9">@Model.EntityName (<code>@Model.EntityId</code>)</dd>
+
+            <dt class="col-sm-3">IP Address</dt>
+            <dd class="col-sm-9">@Model.IPAddress</dd>
+
+            <dt class="col-sm-3">Request Path</dt>
+            <dd class="col-sm-9"><code>@Model.RequestPath</code></dd>
+
+            <dt class="col-sm-3">Correlation Id</dt>
+            <dd class="col-sm-9"><code>@Model.CorrelationId</code></dd>
+        </dl>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">Old Values</div>
+            <div class="card-body">
+                <pre class="mb-0 small">@(string.IsNullOrWhiteSpace(Model.OldValues) ? "—" : Pretty(Model.OldValues))</pre>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">New Values</div>
+            <div class="card-body">
+                <pre class="mb-0 small">@(string.IsNullOrWhiteSpace(Model.NewValues) ? "—" : Pretty(Model.NewValues))</pre>
+            </div>
+        </div>
+    </div>
+</div>

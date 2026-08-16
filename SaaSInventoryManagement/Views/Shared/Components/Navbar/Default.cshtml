@@ -1,4 +1,5 @@
-﻿@using SaaSInventoryManagement.ViewModels.Navigation
+﻿@using SaaSInventoryManagement.Infrastructure.Navigation
+@using SaaSInventoryManagement.ViewModels.Navigation
 @model List<NavGroupDto>
 
 @{
@@ -19,17 +20,11 @@
         currentController.Equals("Home", StringComparison.OrdinalIgnoreCase) &&
         currentAction.Equals("Index", StringComparison.OrdinalIgnoreCase);
 
-    bool IsRoleManagementActive() =>
-        currentController.Equals("RoleManagement", StringComparison.OrdinalIgnoreCase);
-
-    bool IsAuditLogActive() =>
-        currentController.Equals("AuditLog", StringComparison.OrdinalIgnoreCase);
-
     bool IsTenantManagementActive() =>
         currentController.Equals("TenantManagement", StringComparison.OrdinalIgnoreCase);
 
-    bool IsCategoryActive() =>
-        currentController.Equals("Category", StringComparison.OrdinalIgnoreCase);
+    var pageLinks = FeaturePageRoutes.PageLinks;
+    var hiddenFromNav = FeaturePageRoutes.HiddenFromSidebar;
 
     string GroupIcon(string groupName) => groupName switch
     {
@@ -59,7 +54,8 @@
     {
         var collapseId = "grp-" + group.GroupName.Replace(" ", "");
         var groupIsActive = group.Items.Any(i => IsFeatureActive(i.Key)) ||
-                             (group.Items.Any(i => i.Key == "inv.categories.view") && IsCategoryActive());
+                             group.Items.Any(i => pageLinks.TryGetValue(i.Key, out var target) &&
+                                                   currentController.Equals(target.Controller, StringComparison.OrdinalIgnoreCase));
 
         <li class="sidebar-item">
             <a class="sidebar-link" href="#" data-bs-toggle="collapse" data-bs-target="#@collapseId"
@@ -70,24 +66,26 @@
             <ul class="collapse sidebar-submenu @(groupIsActive ? "show" : "")" id="@collapseId">
                 @foreach (var item in group.Items)
                 {
-                    var isCategories = item.Key == "inv.categories.view";
-
-                    <li>
-                        @if (isCategories)
-                        {
-                            <a class="@(IsCategoryActive() ? "active" : "")"
-                               asp-controller="Category" asp-action="Index">
-                                @item.DisplayName
-                            </a>
-                        }
-                        else
-                        {
-                            <a class="@(IsFeatureActive(item.Key) ? "active" : "")"
-                               asp-controller="Home" asp-action="Feature" asp-route-key="@item.Key">
-                                @item.DisplayName
-                            </a>
-                        }
-                    </li>
+                    if (!hiddenFromNav.Contains(item.Key))
+                    {
+                        <li>
+                            @if (pageLinks.TryGetValue(item.Key, out var target))
+                            {
+                                var isActive = currentController.Equals(target.Controller, StringComparison.OrdinalIgnoreCase) &&
+                                               currentAction.Equals(target.Action, StringComparison.OrdinalIgnoreCase);
+                                <a class="@(isActive ? "active" : "")" asp-controller="@target.Controller" asp-action="@target.Action">
+                                    @item.DisplayName
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="@(IsFeatureActive(item.Key) ? "active" : "")"
+                                   asp-controller="Home" asp-action="Feature" asp-route-key="@item.Key">
+                                    @item.DisplayName
+                                </a>
+                            }
+                        </li>
+                    }
                 }
             </ul>
         </li>
@@ -108,28 +106,18 @@
         <li class="sidebar-section-label">Admin</li>
         foreach (var item in adminGroup.Items)
         {
-            var isUserManage = item.Key == "inv.users.manage";
-            var isAuditLogs = item.Key == "inv.auditlogs.view";
-            var active = isUserManage ? IsRoleManagementActive()
-                       : isAuditLogs ? IsAuditLogActive()
-                       : IsFeatureActive(item.Key);
-
             <li class="sidebar-item">
-                @if (isUserManage)
+                @if (pageLinks.TryGetValue(item.Key, out var target))
                 {
-                    <a class="sidebar-link @(active ? "active" : "")" asp-controller="RoleManagement" asp-action="Index">
-                        <i class="@item.IconClass"></i> <span>@item.DisplayName</span>
-                    </a>
-                }
-                else if (isAuditLogs)
-                {
-                    <a class="sidebar-link @(active ? "active" : "")" asp-controller="AuditLog" asp-action="Index">
+                    var isActive = currentController.Equals(target.Controller, StringComparison.OrdinalIgnoreCase) &&
+                                   currentAction.Equals(target.Action, StringComparison.OrdinalIgnoreCase);
+                    <a class="sidebar-link @(isActive ? "active" : "")" asp-controller="@target.Controller" asp-action="@target.Action">
                         <i class="@item.IconClass"></i> <span>@item.DisplayName</span>
                     </a>
                 }
                 else
                 {
-                    <a class="sidebar-link @(active ? "active" : "")" asp-controller="Home" asp-action="Feature" asp-route-key="@item.Key">
+                    <a class="sidebar-link @(IsFeatureActive(item.Key) ? "active" : "")" asp-controller="Home" asp-action="Feature" asp-route-key="@item.Key">
                         <i class="@item.IconClass"></i> <span>@item.DisplayName</span>
                     </a>
                 }
