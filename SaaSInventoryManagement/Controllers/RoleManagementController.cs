@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SaaSInventoryManagement.Infrastructure.Authorization;
 using SaaSInventoryManagement.Models;
 using SaaSInventoryManagement.Models.Identity;
 using SaaSInventoryManagement.Services.Interfaces_;
@@ -151,8 +152,15 @@ namespace SaaSInventoryManagement.Controllers
             var existing = _db.UserPermissions.Where(up => up.UserId == request.UserId);
             _db.UserPermissions.RemoveRange(existing);
 
+            var activeCatalogKeys = await _db.Permissions
+                .Where(p => p.IsActive)
+                .Select(p => p.Key)
+                .ToListAsync();
+
+            var keysToGrant = PermissionHierarchy.ExpandWithImplied(request.PermissionKeys, activeCatalogKeys);
+
             var permissionIds = await _db.Permissions
-                .Where(p => request.PermissionKeys.Contains(p.Key))
+                .Where(p => keysToGrant.Contains(p.Key))
                 .Select(p => p.Id)
                 .ToListAsync();
 
