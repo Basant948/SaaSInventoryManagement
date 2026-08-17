@@ -30,6 +30,7 @@ builder.Services.AddScoped<NavigationService>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
 
 builder.Services.AddDbContext<ApplicationDbContext>((sp, options) =>
 {
