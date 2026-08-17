@@ -70,7 +70,7 @@ else
         </div>
     }
 
-    @foreach (var group in Model)
+    @foreach (var group in Model.Where(g => g.GroupName != "General"))
     {
         <h5 class="mt-4 mb-3">@group.GroupName</h5>
         <div class="row g-3">

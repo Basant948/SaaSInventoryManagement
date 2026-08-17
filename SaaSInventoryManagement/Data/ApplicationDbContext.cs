@@ -33,6 +33,7 @@ public class ApplicationDbContext : IdentityDbContext<Applicationuser>
     public DbSet<Category> Categories { get; set; }
     public DbSet<Warehouse> Warehouses { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<Supplier> Suppliers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -43,6 +44,7 @@ public class ApplicationDbContext : IdentityDbContext<Applicationuser>
         builder.ApplyConfiguration(new UserPermissionConfiguration());
         builder.ApplyConfiguration(new WarehouseConfiguration());
         builder.ApplyConfiguration(new ProductConfiguration());
+        builder.ApplyConfiguration(new SupplierConfiguration());
 
         builder.ApplyTenantQueryFilters(this);
 

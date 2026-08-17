@@ -13,17 +13,20 @@ namespace SaaSInventoryManagement.Repositories
             ApplicationDbContext db,
             ICategoryRepository categories,
             IWarehouseRepository warehouses,
-            IProductRepository products)
+            IProductRepository products,
+            ISupplierRepository suppliers)
         {
             _db = db;
             Categories = categories;
             Warehouses = warehouses;
             Products = products;
+            Suppliers =  suppliers;
         }
 
         public ICategoryRepository Categories { get; }
         public IWarehouseRepository Warehouses { get; }
         public IProductRepository Products { get; }
+        public ISupplierRepository Suppliers { get; }
         public IGenericRepository<TEntity> Repository<TEntity>() where TEntity : class, IEntity
         {
             if (!_genericRepositories.TryGetValue(typeof(TEntity), out var repository))
