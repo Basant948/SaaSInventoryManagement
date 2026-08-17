@@ -1,4 +1,5 @@
-﻿using SaaSInventoryManagement.Models.Base;
+﻿using SaaSInventoryManagement.Models;
+using SaaSInventoryManagement.Models.Base;
 using SaaSInventoryManagement.Repositories.Interfaces;
 
 namespace SaaSInventoryManagement.Repositories
@@ -8,13 +9,18 @@ namespace SaaSInventoryManagement.Repositories
         private readonly ApplicationDbContext _db;
         private readonly Dictionary<Type, object> _genericRepositories = new();
 
-        public UnitOfWork(ApplicationDbContext db, ICategoryRepository categories)
+        public UnitOfWork(
+            ApplicationDbContext db,
+            ICategoryRepository categories,
+            IWarehouseRepository warehouses)
         {
             _db = db;
             Categories = categories;
+            Warehouses = warehouses;
         }
 
         public ICategoryRepository Categories { get; }
+        public IWarehouseRepository Warehouses { get; }
         public IGenericRepository<TEntity> Repository<TEntity>() where TEntity : class, IEntity
         {
             if (!_genericRepositories.TryGetValue(typeof(TEntity), out var repository))
