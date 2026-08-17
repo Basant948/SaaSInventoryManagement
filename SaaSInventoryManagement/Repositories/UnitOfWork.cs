@@ -12,15 +12,18 @@ namespace SaaSInventoryManagement.Repositories
         public UnitOfWork(
             ApplicationDbContext db,
             ICategoryRepository categories,
-            IWarehouseRepository warehouses)
+            IWarehouseRepository warehouses,
+            IProductRepository products)
         {
             _db = db;
             Categories = categories;
             Warehouses = warehouses;
+            Products = products;
         }
 
         public ICategoryRepository Categories { get; }
         public IWarehouseRepository Warehouses { get; }
+        public IProductRepository Products { get; }
         public IGenericRepository<TEntity> Repository<TEntity>() where TEntity : class, IEntity
         {
             if (!_genericRepositories.TryGetValue(typeof(TEntity), out var repository))
