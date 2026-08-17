@@ -1,9 +1,11 @@
-﻿@using SaaSInventoryManagement.ViewModels.Navigation
-@using Microsoft.EntityFrameworkCore
+﻿@using Microsoft.EntityFrameworkCore
+@using SaaSInventoryManagement.Infrastructure.Navigation
+@using SaaSInventoryManagement.ViewModels.Navigation
 @model List<NavGroupDto>
 @inject ApplicationDbContext Db
 @{
     ViewData["Title"] = "Dashboard";
+    var pageLinks = FeaturePageRoutes.PageLinks;
 }
 
 <div class="mb-4">
@@ -72,19 +74,35 @@ else
     {
         <h5 class="mt-4 mb-3">@group.GroupName</h5>
         <div class="row g-3">
-            @foreach (var item in group.Items)
+            @foreach (var item in group.Items.Where(i => !FeaturePageRoutes.HiddenFromSidebar.Contains(i.Key)))
             {
                 <div class="col-6 col-md-4 col-lg-3">
-                    <a class="text-decoration-none" asp-controller="Home" asp-action="Feature" asp-route-key="@item.Key">
-                        <div class="card h-100 shadow-sm">
-                            <div class="card-body text-center">
-                                <i class="@item.IconClass fa-2x mb-2 text-primary"></i>
-                                <div class="fw-semibold">@item.DisplayName</div>
+                    @if (pageLinks.TryGetValue(item.Key, out var target))
+                    {
+                        <a class="text-decoration-none" asp-controller="@target.Controller" asp-action="@target.Action">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="@item.IconClass fa-2x mb-2 text-primary"></i>
+                                    <div class="fw-semibold">@item.DisplayName</div>
+                                </div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="text-decoration-none" asp-controller="Home" asp-action="Feature" asp-route-key="@item.Key">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="@item.IconClass fa-2x mb-2 text-primary"></i>
+                                    <div class="fw-semibold">@item.DisplayName</div>
+                                </div>
+                            </div>
+                        </a>
+                    }
                 </div>
             }
         </div>
     }
+}
+
 }

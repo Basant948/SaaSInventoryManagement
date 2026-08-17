@@ -32,6 +32,7 @@ public class ApplicationDbContext : IdentityDbContext<Applicationuser>
     public DbSet<SeedHistory> SeedHistory { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Warehouse> Warehouses { get; set; }
+    public DbSet<Product> Products { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -41,6 +42,7 @@ public class ApplicationDbContext : IdentityDbContext<Applicationuser>
         builder.ApplyConfiguration(new PermissionConfiguration());
         builder.ApplyConfiguration(new UserPermissionConfiguration());
         builder.ApplyConfiguration(new WarehouseConfiguration());
+        builder.ApplyConfiguration(new ProductConfiguration());
 
         builder.ApplyTenantQueryFilters(this);
 
