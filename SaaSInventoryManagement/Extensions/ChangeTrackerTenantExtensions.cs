@@ -14,10 +14,10 @@ namespace SaaSInventoryManagement.Extensions
             {
                 if (entry.Entity is not ITenantOwned tenantOwned)
                     continue;
-                if (entry.Entity is AuditLog && entry.State != EntityState.Added)
+                if (entry.Entity is IAppendOnly && entry.State is EntityState.Modified or EntityState.Deleted)
                 {
                     throw new InvalidOperationException(
-                        "AuditLog rows are append-only and cannot be modified or deleted.");
+                        $"'{entry.Entity.GetType().Name}' rows are append-only and cannot be modified or deleted.");
                 }
 
                 if (entry.State == EntityState.Added)
