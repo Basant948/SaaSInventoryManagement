@@ -16,7 +16,8 @@ namespace SaaSInventoryManagement.Repositories
             IWarehouseRepository warehouses,
             IProductRepository products,
             ISupplierRepository suppliers,
-            ICustomerRepository customers)
+            ICustomerRepository customers,
+            IPurchaseOrderRepository purchaseOrders)
         {
             _db = db;
             Categories = categories;
@@ -24,6 +25,7 @@ namespace SaaSInventoryManagement.Repositories
             Products = products;
             Suppliers =  suppliers;
             Customers = customers;
+            PurchaseOrders = purchaseOrders;
         }
 
         public ICategoryRepository Categories { get; }
@@ -31,6 +33,7 @@ namespace SaaSInventoryManagement.Repositories
         public IProductRepository Products { get; }
         public ISupplierRepository Suppliers { get; }
         public ICustomerRepository Customers { get; }
+        public IPurchaseOrderRepository PurchaseOrders { get; }
         public IGenericRepository<TEntity> Repository<TEntity>() where TEntity : class, IEntity
         {
             if (!_genericRepositories.TryGetValue(typeof(TEntity), out var repository))
