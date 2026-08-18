@@ -5,47 +5,47 @@ namespace SaaSInventoryManagement.Data.Seeding
 {
     public static class PermissionSeeder
     {
-        private const string SeedKey = "permissions:v2";
+        private const string SeedKey = "permissions:v7";
 
         private static readonly PermDef[] Permissions =
         {
-            // General 
-            new("inv.dashboard.view",        "Dashboard",           "General",       "fa-solid fa-gauge",              "dashboard",         1),
+            // General
+            new("inv.dashboard.view",        "Dashboard",            "General",        "fa-solid fa-gauge",             "dashboard",          1),
 
-            // Catalog 
-            new("inv.products.view",         "View Products",       "Catalog",       "fa-solid fa-box",                "products",          10),
-            new("inv.products.manage",       "Manage Products",     "Catalog",       "fa-solid fa-box-open",           "products-manage",   11),
-            new("inv.categories.view",       "View Categories",     "Catalog",       "fa-solid fa-tags",               "categories",        12),
-            new("inv.categories.manage",     "Manage Categories",   "Catalog",       "fa-solid fa-tag",                "categories-manage", 13),
+            // Catalog
+            new("inv.products.view",         "View Products",        "Catalog",        "fa-solid fa-box",               "products",           10),
+            new("inv.products.manage",       "Manage Products",      "Catalog",        "fa-solid fa-box-open",          "products-manage",    11),
+            new("inv.categories.view",       "View Categories",      "Catalog",        "fa-solid fa-tags",               "categories",         12),
+            new("inv.categories.manage",     "Manage Categories",    "Catalog",        "fa-solid fa-tag",                "categories-manage",  13),
 
-            // Inventory 
-            new("inv.warehouses.view",       "View Warehouses",     "Inventory",     "fa-solid fa-warehouse",          "warehouses",        20),
-            new("inv.warehouses.manage",     "Manage Warehouses",   "Inventory",     "fa-solid fa-industry",           "warehouses-manage", 21),
-            new("inv.stock.view",            "View Stock Levels",   "Inventory",     "fa-solid fa-boxes-stacked",      "stock",             22),
-            new("inv.stock.adjust",          "Adjust Stock",        "Inventory",     "fa-solid fa-sliders",            "stock-adjust",      23),
-            new("inv.stock.transfer",        "Transfer Stock",      "Inventory",     "fa-solid fa-right-left",         "stock-transfer",    24),
+            // Inventory
+            new("inv.warehouses.view",       "View Warehouses",      "Inventory",      "fa-solid fa-warehouse",         "warehouses",         20),
+            new("inv.warehouses.manage",     "Manage Warehouses",    "Inventory",      "fa-solid fa-industry",           "warehouses-manage",  21),
+            new("inv.stock.view",            "View Stock Levels",    "Inventory",      "fa-solid fa-boxes-stacked",      "stock",              22),
+            new("inv.stock.adjust",          "Adjust Stock",         "Inventory",      "fa-solid fa-sliders",            "stock-adjust",       23),
+            new("inv.stock.transfer",        "Transfer Stock",       "Inventory",      "fa-solid fa-right-left",         "stock-transfer",     24),
 
             // Procurement
-            new("inv.suppliers.view",        "View Suppliers",      "Procurement",   "fa-solid fa-truck",              "suppliers",         30),
-            new("inv.suppliers.manage",      "Manage Suppliers",    "Procurement",   "fa-solid fa-truck-ramp-box",     "suppliers-manage",  31),
-            new("inv.purchaseorders.view",   "View Purchase Orders","Procurement",   "fa-solid fa-file-invoice",       "purchase-orders",   32),
-            new("inv.purchaseorders.create", "Create Purchase Order","Procurement",  "fa-solid fa-file-circle-plus",   "po-create",         33),
-            new("inv.purchaseorders.approve","Approve Purchase Order","Procurement", "fa-solid fa-file-circle-check",  "po-approve",        34),
+            new("inv.suppliers.view",        "View Suppliers",       "Procurement",    "fa-solid fa-truck",              "suppliers",          30),
+            new("inv.suppliers.manage",      "Manage Suppliers",     "Procurement",    "fa-solid fa-truck-ramp-box",     "suppliers-manage",   31),
+            new("inv.purchaseorders.view",   "View Purchase Orders", "Procurement",    "fa-solid fa-file-invoice",       "purchase-orders",    32),
+            new("inv.purchaseorders.create", "Create Purchase Order","Procurement",    "fa-solid fa-file-circle-plus",   "po-create",          33),
+            new("inv.purchaseorders.approve","Approve Purchase Order","Procurement",   "fa-solid fa-file-circle-check",  "po-approve",         34),
 
-            //  Sales 
-            new("inv.customers.view",        "View Customers",      "Sales",         "fa-solid fa-user",               "customers",         39),
-            new("inv.salesorders.view",      "View Sales Orders",   "Sales",         "fa-solid fa-receipt",            "sales-orders",      40),
-            new("inv.salesorders.create",    "Create Sales Order",  "Sales",         "fa-solid fa-cart-plus",          "so-create",         41),
+            // Sales
+            new("inv.customers.view",        "View Customers",       "Sales",          "fa-solid fa-user",               "customers",          39),
+            new("inv.salesorders.view",      "View Sales Orders",    "Sales",          "fa-solid fa-receipt",            "sales-orders",       40),
+            new("inv.salesorders.create",    "Create Sales Order",   "Sales",          "fa-solid fa-cart-plus",          "so-create",          41),
 
-            // Reports 
-            new("inv.reports.stock",         "Stock Report",        "Reports",       "fa-solid fa-chart-bar",          "reports-stock",     50),
-            new("inv.reports.sales",         "Sales Report",        "Reports",       "fa-solid fa-chart-line",         "reports-sales",     51),
-            new("inv.reports.purchase",      "Purchase Report",     "Reports",       "fa-solid fa-chart-pie",          "reports-purchase",  52),
+            // Reports
+            new("inv.reports.stock",         "Stock Report",         "Reports",        "fa-solid fa-chart-bar",          "reports-stock",      50),
+            new("inv.reports.sales",         "Sales Report",         "Reports",        "fa-solid fa-chart-line",         "reports-sales",      51, false),
+            new("inv.reports.purchase",      "Purchase Report",      "Reports",        "fa-solid fa-chart-pie",          "reports-purchase",   52, false),
 
-            //  Administration 
-            new("inv.users.manage",          "Manage Users",        "Administration","fa-solid fa-users-gear",         "users-manage",      60),
-            new("inv.settings.manage",       "Company Settings",    "Administration","fa-solid fa-gear",               "settings",          61),
-            new("inv.auditlogs.view",        "Audit Logs",          "Administration","fa-solid fa-clipboard-list",     "audit-logs",        62),
+            // Administration
+            new("inv.users.manage",          "Manage Users",         "Administration", "fa-solid fa-users-gear",         "users-manage",       60),
+            new("inv.settings.manage",       "Company Settings",     "Administration", "fa-solid fa-gear",               "settings",           61),
+            new("inv.auditlogs.view",        "Audit Logs",           "Administration", "fa-solid fa-clipboard-list",     "audit-logs",         62),
         };
 
 
@@ -54,34 +54,49 @@ namespace SaaSInventoryManagement.Data.Seeding
             if (await db.SeedHistory.AnyAsync(s => s.SeedKey == SeedKey))
                 return;
 
-            var existingKeys = await db.Permissions.Select(p => p.Key).ToHashSetAsync();
 
-            var toInsert = Permissions
-                .Where(p => !existingKeys.Contains(p.Key))
-                .Select(p => new Permission
+            var existingPermissions = await db.Permissions
+                .ToDictionaryAsync(p => p.Key);
+
+
+            foreach (var permission in Permissions)
+            {
+                if (existingPermissions.TryGetValue(permission.Key, out var existing))
                 {
-                    Key = p.Key,
-                    DisplayName = p.DisplayName,
-                    GroupName = p.GroupName,
-                    IconClass = p.IconClass,
-                    ControllerAction = p.ControllerAction,
-                    SortOrder = p.SortOrder,
-                    IsActive = true
-                })
-                .ToList();
+                    existing.DisplayName = permission.DisplayName;
+                    existing.GroupName = permission.GroupName;
+                    existing.IconClass = permission.IconClass;
+                    existing.ControllerAction = permission.ControllerAction;
+                    existing.SortOrder = permission.SortOrder;
+                    existing.IsActive = permission.IsActive;
+                }
+                else
+                {
+                    db.Permissions.Add(new Permission
+                    {
+                        Key = permission.Key,
+                        DisplayName = permission.DisplayName,
+                        GroupName = permission.GroupName,
+                        IconClass = permission.IconClass,
+                        ControllerAction = permission.ControllerAction,
+                        SortOrder = permission.SortOrder,
+                        IsActive = permission.IsActive
+                    });
+                }
+            }
 
-            if (toInsert.Count > 0)
-                db.Permissions.AddRange(toInsert);
 
             db.SeedHistory.Add(new Models.SeedHistory
             {
                 SeedKey = SeedKey,
                 AppliedAt = DateTime.UtcNow,
-                Notes = $"Seeded {toInsert.Count} permission(s)"
+                Notes = "Updated and seeded permissions"
             });
+
 
             await db.SaveChangesAsync();
         }
+
 
         private record PermDef(
             string Key,
@@ -89,6 +104,7 @@ namespace SaaSInventoryManagement.Data.Seeding
             string GroupName,
             string IconClass,
             string ControllerAction,
-            int SortOrder);
+            int SortOrder,
+            bool IsActive = true);
     }
 }

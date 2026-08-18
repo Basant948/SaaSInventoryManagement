@@ -1,0 +1,168 @@
+﻿@using SaaSInventoryManagement.Infrastructure.Authorization
+@using SaaSInventoryManagement.ViewModels.Reports
+@model StockReportVm
+@{
+    ViewData["Title"] = "Stock Report";
+}
+
+<h1 class="h3 mb-4">Stock Report</h1>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="fa-solid fa-box fa-2x mb-2 text-primary"></i>
+                <div class="fs-4 fw-bold">@Model.TotalProducts</div>
+                <div class="text-muted small">Products in stock</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="fa-solid fa-warehouse fa-2x mb-2 text-secondary"></i>
+                <div class="fs-4 fw-bold">@Model.TotalWarehouses</div>
+                <div class="text-muted small">Warehouses</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="fa-solid fa-triangle-exclamation fa-2x mb-2 @(Model.BelowThresholdCount > 0 ? "text-warning" : "text-muted")"></i>
+                <div class="fs-4 fw-bold">@Model.BelowThresholdCount</div>
+                <div class="text-muted small">At or below threshold (@Model.LowStockThreshold.ToString("N0"))</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="fa-solid fa-circle-xmark fa-2x mb-2 @(Model.OutOfStockCount > 0 ? "text-danger" : "text-muted")"></i>
+                <div class="fs-4 fw-bold">@Model.OutOfStockCount</div>
+                <div class="text-muted small">Out-of-stock lines</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-8">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">
+                <span class="fw-semibold">Stock movement - last 30 days</span>
+            </div>
+            <div class="card-body">
+                <canvas id="movementChart" height="90"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">
+                <span class="fw-semibold">On-hand by warehouse</span>
+            </div>
+            <div class="card-body">
+                <canvas id="warehouseChart" height="220"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <div>
+            <span class="fw-semibold">Lowest stock levels</span>
+            <span class="text-muted small ms-1">(bottom @Model.LowestStockItems.Count Product+Warehouse lines)</span>
+        </div>
+        @if (User.HasClaim(PermissionClaimTypes.Permission, "*") || User.HasClaim(PermissionClaimTypes.Permission, "inv.settings.manage"))
+        {
+            <a asp-controller="Settings" asp-action="Index" class="small text-decoration-none">
+                <i class="fa-solid fa-gear"></i> Adjust threshold
+            </a>
+        }
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>SKU</th>
+                    <th>Warehouse</th>
+                    <th class="text-end">Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.LowestStockItems.Count == 0)
+                {
+                    <tr><td colspan="4" class="text-muted text-center py-4">No stock records yet.</td></tr>
+                }
+                @foreach (var item in Model.LowestStockItems)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.SKU</td>
+                        <td>@item.WarehouseName</td>
+                        <td class="text-end @(item.Quantity <= 0 ? "text-danger fw-semibold" : item.IsBelowThreshold ? "text-warning fw-semibold" : "")">
+                            @item.Quantity.ToString("N0")
+                            @if (item.Quantity <= 0)
+                            {
+                                <span class="badge bg-danger ms-1">Out</span>
+                            }
+                            else if (item.IsBelowThreshold)
+                            {
+                                <span class="badge bg-warning text-dark ms-1">Low</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script>
+        const movementLabels = @Html.Raw(Json.Serialize(Model.DailyMovements.Select(d => d.Date.ToString("MMM d"))));
+        const movementIn = @Html.Raw(Json.Serialize(Model.DailyMovements.Select(d => d.QuantityIn)));
+        const movementOut = @Html.Raw(Json.Serialize(Model.DailyMovements.Select(d => d.QuantityOut)));
+
+        new Chart(document.getElementById('movementChart'), {
+            type: 'bar',
+            data: {
+                labels: movementLabels,
+                datasets: [
+                    { label: 'Stock in', data: movementIn, backgroundColor: '#198754' },
+                    { label: 'Stock out', data: movementOut, backgroundColor: '#dc3545' }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { stacked: false, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 10 } },
+                    y: { beginAtZero: true }
+                },
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+
+        const warehouseLabels = @Html.Raw(Json.Serialize(Model.ByWarehouse.Select(w => w.WarehouseName)));
+        const warehouseQuantities = @Html.Raw(Json.Serialize(Model.ByWarehouse.Select(w => w.TotalQuantity)));
+
+        new Chart(document.getElementById('warehouseChart'), {
+            type: 'doughnut',
+            data: {
+                labels: warehouseLabels,
+                datasets: [{
+                    data: warehouseQuantities,
+                    backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#6f42c1', '#20c997', '#fd7e14', '#0dcaf0', '#d63384']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+    </script>
+}
