@@ -1,0 +1,55 @@
+﻿@using SaaSInventoryManagement.ViewModels.Stock
+@model StockAdjustFormVm
+@{
+    ViewData["Title"] = "Adjust Stock";
+}
+
+<h1 class="h3 mb-4">Adjust Stock</h1>
+
+<div class="card shadow-sm" style="max-width: 560px;">
+    <div class="card-body">
+        <form asp-controller="Stock" asp-action="Adjust" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="ProductId"></label>
+                <select asp-for="ProductId" asp-items="Model.Products" class="form-select">
+                    <option value="">-- Select a product --</option>
+                </select>
+                <span asp-validation-for="ProductId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="WarehouseId"></label>
+                <select asp-for="WarehouseId" asp-items="Model.Warehouses" class="form-select">
+                    <option value="">-- Select a warehouse --</option>
+                </select>
+                <span asp-validation-for="WarehouseId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="QuantityChange"></label>
+                <input asp-for="QuantityChange" type="number" step="0.001" class="form-control" />
+                <span asp-validation-for="QuantityChange" class="text-danger"></span>
+                <small class="text-muted">Positive to add stock, negative to remove stock.</small>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="AdjustmentReason"></label>
+                <select asp-for="AdjustmentReason" asp-items="Html.GetEnumSelectList<SaaSInventoryManagement.Enums.StockAdjustmentReason>()" class="form-select"></select>
+                <span asp-validation-for="AdjustmentReason" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-4">
+                <label asp-for="Notes"></label>
+                <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Optional extra detail"></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Save Adjustment</button>
+                <a class="btn btn-outline-secondary" asp-controller="Stock" asp-action="Index">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -35,6 +35,8 @@ public class ApplicationDbContext : IdentityDbContext<Applicationuser>
     public DbSet<Product> Products { get; set; }
     public DbSet<Supplier> Suppliers { get; set; }
     public DbSet<Customer> Customers { get; set; }
+    public DbSet<StockLevel> StockLevels { get; set; }
+    public DbSet<StockLedgerEntry> StockLedgerEntries { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -47,6 +49,8 @@ public class ApplicationDbContext : IdentityDbContext<Applicationuser>
         builder.ApplyConfiguration(new ProductConfiguration());
         builder.ApplyConfiguration(new SupplierConfiguration());
         builder.ApplyConfiguration(new CustomerConfiguration());
+        builder.ApplyConfiguration(new StockLevelConfiguration());
+        builder.ApplyConfiguration(new StockLedgerEntryConfiguration());
 
         builder.ApplyTenantQueryFilters(this);
 

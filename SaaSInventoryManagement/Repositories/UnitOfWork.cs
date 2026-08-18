@@ -1,4 +1,5 @@
-﻿using SaaSInventoryManagement.Models;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using SaaSInventoryManagement.Models;
 using SaaSInventoryManagement.Models.Base;
 using SaaSInventoryManagement.Repositories.Interfaces;
 
@@ -42,5 +43,6 @@ namespace SaaSInventoryManagement.Repositories
         }
 
         public Task<int> SaveChangesAsync() => _db.SaveChangesAsync();
+        public Task<IDbContextTransaction> BeginTransactionAsync() => _db.Database.BeginTransactionAsync();
     }
 }
