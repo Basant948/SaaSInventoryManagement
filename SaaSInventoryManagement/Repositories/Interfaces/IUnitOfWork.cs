@@ -8,6 +8,7 @@ namespace SaaSInventoryManagement.Repositories.Interfaces
         IWarehouseRepository Warehouses { get; }
         IProductRepository Products { get; }
         ISupplierRepository Suppliers { get; }
+        ICustomerRepository Customers { get; }
         IGenericRepository<TEntity> Repository<TEntity>() where TEntity : class, IEntity;
 
         Task<int> SaveChangesAsync();

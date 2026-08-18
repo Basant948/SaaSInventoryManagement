@@ -5,7 +5,7 @@ namespace SaaSInventoryManagement.Data.Seeding
 {
     public static class PermissionSeeder
     {
-        private const string SeedKey = "permissions:v1";
+        private const string SeedKey = "permissions:v2";
 
         private static readonly PermDef[] Permissions =
         {
@@ -33,6 +33,7 @@ namespace SaaSInventoryManagement.Data.Seeding
             new("inv.purchaseorders.approve","Approve Purchase Order","Procurement", "fa-solid fa-file-circle-check",  "po-approve",        34),
 
             //  Sales 
+            new("inv.customers.view",        "View Customers",      "Sales",         "fa-solid fa-user",               "customers",         39),
             new("inv.salesorders.view",      "View Sales Orders",   "Sales",         "fa-solid fa-receipt",            "sales-orders",      40),
             new("inv.salesorders.create",    "Create Sales Order",  "Sales",         "fa-solid fa-cart-plus",          "so-create",         41),
 

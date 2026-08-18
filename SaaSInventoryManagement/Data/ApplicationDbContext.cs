@@ -34,6 +34,7 @@ public class ApplicationDbContext : IdentityDbContext<Applicationuser>
     public DbSet<Warehouse> Warehouses { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Supplier> Suppliers { get; set; }
+    public DbSet<Customer> Customers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -45,6 +46,7 @@ public class ApplicationDbContext : IdentityDbContext<Applicationuser>
         builder.ApplyConfiguration(new WarehouseConfiguration());
         builder.ApplyConfiguration(new ProductConfiguration());
         builder.ApplyConfiguration(new SupplierConfiguration());
+        builder.ApplyConfiguration(new CustomerConfiguration());
 
         builder.ApplyTenantQueryFilters(this);
 
