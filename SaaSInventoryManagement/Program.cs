@@ -35,6 +35,8 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
+builder.Services.AddScoped<IStockService, StockService>();
+
 // File uploads
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 

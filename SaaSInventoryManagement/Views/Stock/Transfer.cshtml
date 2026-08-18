@@ -1,0 +1,57 @@
+﻿@using SaaSInventoryManagement.ViewModels.Stock
+@model StockTransferFormVm
+@{
+    ViewData["Title"] = "Transfer Stock";
+}
+
+<h1 class="h3 mb-4">Transfer Stock</h1>
+
+<div class="card shadow-sm" style="max-width: 560px;">
+    <div class="card-body">
+        <form asp-controller="Stock" asp-action="Transfer" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="ProductId"></label>
+                <select asp-for="ProductId" asp-items="Model.Products" class="form-select">
+                    <option value="">-- Select a product --</option>
+                </select>
+                <span asp-validation-for="ProductId" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 form-group mb-3">
+                    <label asp-for="FromWarehouseId"></label>
+                    <select asp-for="FromWarehouseId" asp-items="Model.Warehouses" class="form-select">
+                        <option value="">-- From --</option>
+                    </select>
+                    <span asp-validation-for="FromWarehouseId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                    <label asp-for="ToWarehouseId"></label>
+                    <select asp-for="ToWarehouseId" asp-items="Model.Warehouses" class="form-select">
+                        <option value="">-- To --</option>
+                    </select>
+                    <span asp-validation-for="ToWarehouseId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Quantity"></label>
+                <input asp-for="Quantity" type="number" step="0.001" min="0.001" class="form-control" />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-4">
+                <label asp-for="Notes"></label>
+                <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Transfer Stock</button>
+                <a class="btn btn-outline-secondary" asp-controller="Stock" asp-action="Index">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

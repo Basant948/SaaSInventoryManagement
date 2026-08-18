@@ -1,4 +1,5 @@
-﻿using SaaSInventoryManagement.Models.Base;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using SaaSInventoryManagement.Models.Base;
 
 namespace SaaSInventoryManagement.Repositories.Interfaces
 {
@@ -12,5 +13,6 @@ namespace SaaSInventoryManagement.Repositories.Interfaces
         IGenericRepository<TEntity> Repository<TEntity>() where TEntity : class, IEntity;
 
         Task<int> SaveChangesAsync();
+        Task<IDbContextTransaction> BeginTransactionAsync();
     }
 }
