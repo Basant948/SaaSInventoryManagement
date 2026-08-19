@@ -27,31 +27,30 @@ The project is designed using **enterprise-level architecture and best practices
 ## Inventory Management
 
 * Product Management✅
-* Category Management
-* Unit Management
-* Warehouse Management
-* Inventory Tracking
-* Stock Movement History
+* Category Management✅
+* Unit Management✅
+* Warehouse Management✅
+* Inventory Tracking✅
+* Stock Movement History✅
 
 ## Sales & Purchasing
 
-* Supplier Management
-* Customer Management
-* Purchase Orders
-* Sales Orders
-* Purchase Returns
-* Sales Returns
+* Supplier Management✅
+* Customer Management✅
+* Purchase Orders✅
+* Sales Orders✅
+* Purchase Returns✅
 
 ## Stock Operations
 
-* Stock Transfer
-* Stock Adjustment
-* Low Stock Alerts
+* Stock Transfer✅
+* Stock Adjustment✅
+* Low Stock Alerts✅
 
 ## Dashboard & Reporting
 
-* Dashboard
-* Business Reports
+* Dashboard✅
+* Business Reports✅
 * Notifications
 
 ---
@@ -120,12 +119,12 @@ Implemented concepts:
 * Generic Repository ✅
 * Specific Repository ✅
 * Unit of Work Pattern ✅
-* Dependency Injection
-* Service Layer
-* DTO Pattern
-* Middleware Pipeline
-* Global Exception Handling
-* FluentValidation
+* Dependency Injection✅
+* Service Layer✅
+* DTO Pattern✅
+* Middleware Pipeline✅
+* Global Exception Handling✅
+* FluentValidation✅
 
 ---
 
@@ -186,68 +185,127 @@ SaaSInventoryManagement
 │
 ├── Controllers/
 │   ├── AccountController.cs
-│   ├── HomeController.cs
-│   └── RoleManagementController.cs
+│   ├── RoleManagementController.cs
+│   ├── ProductController.cs
+│   └── ...
 │
 ├── Data/
 │   ├── ApplicationDbContext.cs
+│   ├── Interceptors/
+│   │   └── AuditSaveChangesInterceptor.cs
 │   └── Seeding/
+│       ├── PermissionSeeder.cs
+│       └── SuperAdminSeeder.cs
+│
+├── Configurations/
+│   ├── ProductConfiguration.cs
+│   ├── WarehouseConfiguration.cs
+│   └── ...
 │
 ├── Extensions/
 │   ├── ModelBuilderTenantExtensions.cs
-│   │   └── Global tenant query filters and tenant validation
-│   │
-│   └── ChangeTrackerTenantExtensions.cs
-│       └── Tenant write guards for insert/update operations
+│   ├── ChangeTrackerTenantExtensions.cs
+│   ├── ModelBuilderSoftDeleteExtensions.cs
+│   └── ...
+│
+├── Infrastructure/
+│   └── Authorization/
+│       ├── PermissionAuthorizationHandler.cs
+│       ├── PermissionPolicyProvider.cs
+│       └── PermissionRequirement.cs
 │
 ├── Middleware/
-│   └── TenantMiddleware.cs
-│       └── Resolves and validates tenant per request
+│   ├── TenantMiddleware.cs
+│   ├── CorrelationIdMiddleware.cs
+│   └── ExceptionHandlingMiddleware.cs
 │
 ├── Models/
 │   ├── Base/
-│   │   └── ITenantOwned.cs
-│   │       └── Marker interface for tenant-scoped entities
-│   │
+│   │   ├── ITenantOwned.cs
+│   │   ├── ISoftDelete.cs
+│   │   └── IAppendOnly.cs
 │   ├── Identity/
 │   │   └── ApplicationUser.cs
-│   │       └── Extends IdentityUser with user and tenant details
-│   │
-│   └── Tenant.cs
-│       └── Company/organization entity
+│   ├── Tenant.cs
+│   ├── Permission.cs
+│   ├── Product.cs
+│   └── ...
 │
 ├── Repositories/
-│   ├── Interfaces/
+│   ├── Interfaces_/
 │   │   ├── IGenericRepository.cs
 │   │   ├── IUnitOfWork.cs
-│   │   └── ICategoryRepository.cs
-│   │
+│   │   └── IProductRepository.cs
 │   ├── GenericRepository.cs
 │   ├── UnitOfWork.cs
-│   └── CategoryRepository.cs
+│   └── ...
 │
 ├── Services/
 │   ├── Interfaces_/
-│   │   └── ITenantProvider.cs
-│   │       └── Resolves current TenantId and SuperAdmin status
-│   │
+│   │   ├── ITenantProvider.cs
+│   │   └── ICurrentUserService.cs
 │   ├── TenantProvider.cs
-│   │   └── Reads tenant information from claims
-│   │
-│   └── TenantClaimsPrincipalFactory.cs
-│       └── Adds tenant claim during authentication
+│   ├── TenantClaimsPrincipalFactory.cs
+│   └── ...
 │
-├── Migrations/
+├── Exceptions/
+│   ├── AppException.cs
+│   ├── NotFoundException.cs
+│   └── ...
+│
+├── Enums/
+│   ├── AuditAction.cs
+│   ├── StockMovementType.cs
+│   └── ...
+│
+├── ViewModels/
+│   ├── Navigation/
+│   ├── Product/
+│   ├── RoleManagement/
+│   └── ...
+│
+├── ViewComponents/
+│   └── NavbarViewComponent.cs
 │
 ├── Views/
+│   ├── Account/
+│   ├── Product/
+│   ├── RoleManagement/
+│   ├── TenantManagement/
+│   └── ...
 │
 ├── wwwroot/
 │
-└── Program.cs
+├── Migrations/
+│
+├── Program.cs
+├── appsettings.json
+└── SaaSInventoryManagement.csproj
+
+
+SaasInventoryManagement.Test
+│
+├── Authorization/
+│   └── PermissionAuthorizationHandlerTests.cs
+│       ├── Wildcard permission test
+│       ├── Exact permission test
+│       ├── Missing permission test
+│       ├── No permission claims test
+│       └── Anonymous user test
+│
+└── SaasInventoryManagement.Test.csproj
 ```
 
 ### Tenant Management
 ![tenantmgt](https://github.com/Basant948/SaaSInventoryManagement/blob/c3318a51555223401a043bb919235710ecd4d4d9/Tenantmanagement.PNG)
+### Purchse Order
+![Purchase](https://github.com/Basant948/SaaSInventoryManagement/blob/43d3f0756cf6140f566bbde96060a5773ada3837/Purchase.PNG)
+### Sales Order
+![Sales](https://github.com/Basant948/SaaSInventoryManagement/blob/43d3f0756cf6140f566bbde96060a5773ada3837/Sell.PNG)
+### AuditLog
+![Audit](https://github.com/Basant948/SaaSInventoryManagement/blob/43d3f0756cf6140f566bbde96060a5773ada3837/Audit.PNG)
+### Bussiness Report 
+![Report](https://github.com/Basant948/SaaSInventoryManagement/blob/a821acdce578403e761624d01f6c436eeec8ade5/Report.PNG)
 
 ---
 
@@ -300,10 +358,9 @@ Default seeded accounts are configured in:
 - ✅ Advanced RBAC Foundation
 - ✅ Role Management UI
 - ✅ Tenant Registration
-- ⏳ Inventory Modules
-- ⏳ Sales & Purchasing
-- ⏳ Dashboard & Reports
-- ⏳ Audit Logging
+- ✅ Sales & Purchasing
+- ✅ Dashboard & Reports
+- ✅Audit Logging
 - ⏳ Hangfire Integration
 - ⏳ SignalR Notifications
 
