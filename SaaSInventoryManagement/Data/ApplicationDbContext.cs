@@ -31,6 +31,16 @@ public class ApplicationDbContext : IdentityDbContext<Applicationuser>
     public DbSet<UserPermission> UserPermissions { get; set; }
     public DbSet<SeedHistory> SeedHistory { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<Warehouse> Warehouses { get; set; }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<Supplier> Suppliers { get; set; }
+    public DbSet<Customer> Customers { get; set; }
+    public DbSet<StockLevel> StockLevels { get; set; }
+    public DbSet<StockLedgerEntry> StockLedgerEntries { get; set; }
+    public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+    public DbSet<PurchaseOrderLine> PurchaseOrderLines { get; set; }
+    public DbSet<SalesOrder> SalesOrders { get; set; }
+    public DbSet<SalesOrderLine> SalesOrderLines { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -39,6 +49,16 @@ public class ApplicationDbContext : IdentityDbContext<Applicationuser>
         builder.ApplyConfiguration(new AuditLogConfiguration());
         builder.ApplyConfiguration(new PermissionConfiguration());
         builder.ApplyConfiguration(new UserPermissionConfiguration());
+        builder.ApplyConfiguration(new WarehouseConfiguration());
+        builder.ApplyConfiguration(new ProductConfiguration());
+        builder.ApplyConfiguration(new SupplierConfiguration());
+        builder.ApplyConfiguration(new CustomerConfiguration());
+        builder.ApplyConfiguration(new StockLevelConfiguration());
+        builder.ApplyConfiguration(new StockLedgerEntryConfiguration());
+        builder.ApplyConfiguration(new PurchaseOrderConfiguration());
+        builder.ApplyConfiguration(new PurchaseOrderLineConfiguration());
+        builder.ApplyConfiguration(new SalesOrderConfiguration());
+        builder.ApplyConfiguration(new SalesOrderLineConfiguration());
 
         builder.ApplyTenantQueryFilters(this);
 

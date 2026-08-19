@@ -1,0 +1,138 @@
+﻿@using SaaSInventoryManagement.ViewModels.SalesOrder
+@model SalesOrderFormVm
+@{
+    ViewData["Title"] = "New Sales Order";
+}
+
+<h1 class="h3 mb-4">New Sales Order</h1>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form asp-controller="SalesOrder" asp-action="Create" method="post" id="soForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row">
+                <div class="col-md-4 form-group mb-3">
+                    <label asp-for="CustomerId"></label>
+                    <select asp-for="CustomerId" asp-items="Model.Customers" class="form-select">
+                        <option value="">-- Select a customer --</option>
+                    </select>
+                    <span asp-validation-for="CustomerId" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                    <label asp-for="WarehouseId"></label>
+                    <select asp-for="WarehouseId" asp-items="Model.Warehouses" class="form-select">
+                        <option value="">-- Select a warehouse --</option>
+                    </select>
+                    <span asp-validation-for="WarehouseId" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                    <label asp-for="RequestedDate"></label>
+                    <input asp-for="RequestedDate" type="date" class="form-control" />
+                    <span asp-validation-for="RequestedDate" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group mb-4">
+                <label asp-for="Notes"></label>
+                <textarea asp-for="Notes" class="form-control" rows="2"></textarea>
+            </div>
+
+            <h2 class="h6">Lines</h2>
+            <table class="table table-sm align-middle" id="linesTable">
+                <thead>
+                    <tr>
+                        <th style="width:45%">Product</th>
+                        <th style="width:20%">Quantity</th>
+                        <th style="width:20%">Unit Price</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="linesBody">
+                    @for (var i = 0; i < Model.Lines.Count; i++)
+                    {
+                        <tr class="line-row">
+                            <td>
+                                <select name="Lines[@i].ProductId" class="form-select line-product">
+                                    <option value="">-- Select a product --</option>
+                                    @foreach (var p in Model.Products)
+                                    {
+                                        <option value="@p.Value">@p.Text</option>
+                                    }
+                                </select>
+                            </td>
+                            <td><input type="number" step="0.001" min="0" name="Lines[@i].QuantityOrdered" class="form-control" /></td>
+                            <td><input type="number" step="0.01" min="0" name="Lines[@i].UnitPrice" class="form-control" /></td>
+                            <td><button type="button" class="btn btn-sm btn-outline-danger remove-line"><i class="fa-solid fa-xmark"></i></button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <button type="button" id="addLineBtn" class="btn btn-sm btn-outline-secondary mb-4">
+                <i class="fa-solid fa-plus"></i> Add Line
+            </button>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Create Sales Order</button>
+                <a class="btn btn-outline-secondary" asp-controller="SalesOrder" asp-action="Index">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function() {
+            const productOptionsHtml = document.querySelector('.line-product').innerHTML;
+
+            const productPrices = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ProductPrices));
+
+            function fillPriceFromProduct(row) {
+                const select = row.querySelector('.line-product');
+                const priceInput = row.querySelector('input[name$=".UnitPrice"]');
+                if (!select || !priceInput) return;
+
+                if (priceInput.value) return;
+                const price = productPrices[select.value];
+                if (price !== undefined) priceInput.value = price;
+            }
+
+            document.getElementById('linesBody').addEventListener('change', function(e) {
+                if (e.target.classList.contains('line-product')) {
+                    fillPriceFromProduct(e.target.closest('.line-row'));
+                }
+            });
+
+            function reindex() {
+                document.querySelectorAll('#linesBody .line-row').forEach((row, index) => {
+                    row.querySelectorAll('[name^="Lines["]').forEach(el => {
+                        el.name = el.name.replace(/Lines\[\d+\]/, `Lines[${index}]`);
+                    });
+                });
+            }
+
+            document.getElementById('addLineBtn').addEventListener('click', function() {
+                const tbody = document.getElementById('linesBody');
+                const row = document.createElement('tr');
+                row.className = 'line-row';
+                row.innerHTML = `
+                            <td><select name="Lines[0].ProductId" class="form-select line-product">${productOptionsHtml}</select></td>
+                            <td><input type="number" step="0.001" min="0" name="Lines[0].QuantityOrdered" class="form-control" /></td>
+                            <td><input type="number" step="0.01" min="0" name="Lines[0].UnitPrice" class="form-control" /></td>
+                            <td><button type="button" class="btn btn-sm btn-outline-danger remove-line"><i class="fa-solid fa-xmark"></i></button></td>
+                        `;
+                tbody.appendChild(row);
+                reindex();
+            });
+
+            document.getElementById('linesBody').addEventListener('click', function(e) {
+                const btn = e.target.closest('.remove-line');
+                if (!btn) return;
+                const rows = document.querySelectorAll('#linesBody .line-row');
+                if (rows.length <= 1) return;
+                btn.closest('.line-row').remove();
+                reindex();
+            });
+        })();
+    </script>
+}
