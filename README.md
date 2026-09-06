@@ -1,4 +1,4 @@
-# SaaS Inventory Management
+# SaaS Inventory Management (live demo: http://saasinventorybybasant.runasp.net/ )
 
 A **multi-tenant SaaS Inventory Management System** built with **ASP.NET Core** that enables multiple organizations (tenants) to securely manage inventory, warehouses, suppliers, customers, purchases, sales, and stock operations from a single application.
 
