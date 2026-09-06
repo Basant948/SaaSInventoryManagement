@@ -9,6 +9,27 @@
     <h1>SaaSInventoryManagement</h1>
     <p class="auth-subtitle">Sign in to your workspace</p>
 
+    <!-- Demo Credentials Info Box -->
+    <div class="demo-credentials-box">
+        <p class="demo-label">🔑 <strong>Demo Credentials</strong></p>
+        <div class="demo-row">
+            <span class="demo-role">Admin:</span>
+            <span class="demo-email">admin@demoinventory.com</span>
+            <span class="demo-pass">/ Admin@123</span>
+        </div>
+        <div class="demo-row">
+            <span class="demo-role">Staff:</span>
+            <span class="demo-email">staff@demoinventory.com</span>
+            <span class="demo-pass">/ Staff@123</span>
+        </div>
+        <div class="demo-row">
+            <span class="demo-role">Super Admin:</span>
+            <span class="demo-email">superadmin@inventorywithai.com</span>
+            <span class="demo-pass">/ SuperAdmin@123</span>
+        </div>
+        <p class="demo-hint">💡 Use any of these to explore the app</p>
+    </div>
+
     <form asp-controller="Account" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
